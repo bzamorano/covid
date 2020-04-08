@@ -4,87 +4,21 @@ library(ggplot2)
 library(tidyr)
 library(scales)
 
+source("./functions.R")
+
 GET("https://rubenfcasal.github.io/COVID-19/acumulados.RData", 
     authenticate(":", ":", type="ntlm"),
     write_disk(tf <- "./acumulados.RData", overwrite = TRUE))
+load(tf)
 
-load("./acumulados.RData")
+# Madrid: training sample. Catalonia: test sample
+dt_tr <- acumulados[acumulados$CCAA.ISO =="MD",c(3:8)]
+dt_te <- acumulados[acumulados$CCAA.ISO =="CT",c(3:8)]
 
-# sample Madrid
-dt <- acumulados[acumulados$CCAA.ISO =="MD",c(3:8)]
+dt_tr <- FixData(dt_tr)
+dt_te <- FixData(dt_te)
 
-nrows <- nrow(dt)
-
-dCasos          <- integer(nrows)
-wCasos          <- integer(nrows)
-hCasos <- matrix(data = 0, nrow = nrows, ncol = 7)
-dHospitalizados <- integer(nrows)
-wHospitalizados <- integer(nrows)
-hHospitalizados <- matrix(data = 0, nrow = nrows, ncol = 7)
-dUCI            <- integer(nrows)
-wUCI            <- integer(nrows)
-hUCI <- matrix(data = 0, nrow = nrows, ncol = 7)
-dFallecidos     <- integer(nrows)
-wFallecidos     <- integer(nrows)
-hFallecidos <- matrix(data = 0, nrow = nrows, ncol = 7)
-dRecuperados    <- integer(nrows)
-wRecuperados    <- integer(nrows)
-hRecuperados <- matrix(data = 0, nrow = nrows, ncol = 7)
-
-for (i in 2:nrows) {
-  dCasos[i]          <- dt$Casos[i]-dt$Casos[i-1]
-  dHospitalizados[i] <- dt$Hospitalizados[i]-dt$Hospitalizados[i-1]
-  dUCI[i]            <- dt$UCI[i]-dt$UCI[i-1]
-  dFallecidos[i]     <- dt$Fallecidos[i]-dt$Fallecidos[i-1]
-  dRecuperados[i]    <- dt$Recuperados[i]-dt$Recuperados[i-1]
-  
-  max_index <- max(2, i-7)
-  wCasos[i] <- sum(dCasos[max_index:i])
-  wHospitalizados[i] <- sum(dHospitalizados[max_index:i])
-  wUCI[i] <- sum(dUCI[max_index:i])
-  wFallecidos[i] <- sum(dFallecidos[max_index:i])
-  wRecuperados[i] <- sum(dRecuperados[max_index:i])
-  for (k in 1:(i-1)) {
-    # print(paste("i", i, "k", k, "i-k:", i-k))
-    if(i-k < 8){
-      hCasos[i, i-k] <- dt$Casos[k]
-      hHospitalizados[i, i-k] <- dt$Hospitalizados[k]
-      hUCI[i, i-k] <- dt$UCI[k]
-      hFallecidos[i, i-k] <- dt$Fallecidos[k]
-      hRecuperados[i, i-k] <- dt$Recuperados[k]
-    }
-  }
-}
-
-dt['dCasos'] <- dCasos
-dt['wCasos'] <- wCasos
-dt['dHospitalizados'] <- dHospitalizados
-dt['wHospitalizados'] <- wHospitalizados
-dt['dUCI'] <- dUCI
-dt['wUCI'] <- wUCI
-dt['dFallecidos'] <- dFallecidos
-dt['wFallecidos'] <- wFallecidos
-dt['dRecuperados'] <- dRecuperados
-dt['wRecuperados'] <- wRecuperados
-
-for (i in 1:7) {
-  dt[paste0('hCasos', i)] <- hCasos[,i]
-  dt[paste0('hFallecidos', i)] <- hFallecidos[,i]
-  dt[paste0('hHospitalizados', i)] <- hHospitalizados[,i]
-  dt[paste0('hRecuperados', i)] <- hRecuperados[,i]
-  dt[paste0('hUCI', i)] <- hUCI[,i]
-}
-
-rm(dCasos, dHospitalizados, dUCI, dFallecidos, dRecuperados)
-rm(wCasos, wHospitalizados, wUCI, wFallecidos, wRecuperados)
-
-dt[dt$Hospitalizados > 0, ]%>%
-  ggplot(aes(x=Fecha, y=Hospitalizados / Casos)) +
-  geom_line(size=1, colour="red")  +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
-  labs(x = "Fecha", y = "Hospitalizados / Casos")
-
-dt[(dt$Casos > 100), ]%>%
+dt_tr[(dt_tr$Casos > 100), ]%>%
   ggplot(aes(x=Casos, y=wCasos)) +
   geom_line(size=1, colour="red") +
   scale_x_log10(labels = comma_format(big.mark = " ")) +
@@ -92,8 +26,8 @@ dt[(dt$Casos > 100), ]%>%
   labs(x = "Total cases", y = "Weekly new cases")
 
 # Model 0:
-mdl0 <- glm(formula = dt$Casos ~ dt$hCasos1+dt$hCasos2+dt$hCasos3+
-              dt$hCasos4+dt$hCasos5+dt$hCasos6+dt$hCasos7)
+mdl0 <- glm(formula = dt_tr$Casos ~ dt_tr$hCasos1+dt_tr$hCasos2+dt_tr$hCasos3+
+              dt_tr$hCasos4+dt_tr$hCasos5+dt_tr$hCasos6+dt_tr$hCasos7)
 
 var_shortlist <- c("hCasos1", "hCasos2", "hCasos3", "hCasos4",
                    "hCasos5", "hCasos6", "hCasos7",
@@ -107,69 +41,41 @@ var_shortlist <- c("hCasos1", "hCasos2", "hCasos3", "hCasos4",
                    "hUCI5", "hUCI6", "hUCI7")
 
 # Model 1:
-modelMatrixFormula <- formula(dt[,c("Casos", var_shortlist)])
-mdlCasos <- glm(data = dt, formula = modelMatrixFormula)
+modelMatrixFormula <- formula(dt_tr[,c("Casos", var_shortlist)])
+mdlCasos <- glm(data = dt_tr, formula = modelMatrixFormula)
 
-modelMatrixFormula <- formula(dt[,c("Fallecidos", var_shortlist)])
-mdlFallecidos <- glm(data = dt, formula = modelMatrixFormula)
+modelMatrixFormula <- formula(dt_tr[,c("Fallecidos", var_shortlist)])
+mdlFallecidos <- glm(data = dt_tr, formula = modelMatrixFormula)
 
-modelMatrixFormula <- formula(dt[,c("Hospitalizados", var_shortlist)])
-mdlHospitalizados <- glm(data = dt, formula = modelMatrixFormula)
+modelMatrixFormula <- formula(dt_tr[,c("Hospitalizados", var_shortlist)])
+mdlHospitalizados <- glm(data = dt_tr, formula = modelMatrixFormula)
 
-modelMatrixFormula <- formula(dt[,c("Recuperados", var_shortlist)])
-mdlRecuperados <- glm(data = dt, formula = modelMatrixFormula)
+modelMatrixFormula <- formula(dt_tr[,c("Recuperados", var_shortlist)])
+mdlRecuperados <- glm(data = dt_tr, formula = modelMatrixFormula)
 
-modelMatrixFormula <- formula(dt[,c("UCI", var_shortlist)])
-mdlUCI <- glm(data = dt, formula = modelMatrixFormula)
+modelMatrixFormula <- formula(dt_tr[,c("UCI", var_shortlist)])
+mdlUCI <- glm(data = dt_tr, formula = modelMatrixFormula)
 
-#Plot model for cases
-ggplot(data=dt, aes(x=Fecha, y=Casos)) +
+#Plot model for cases (model 0)
+ggplot(data=dt_te, aes(x=Fecha, y=Casos)) +
   geom_point(size=2, colour="blue") +
-  geom_line(aes(y = mdlCasos$fitted.values, col = 'Modelo'), size=1, colour="red") +
+  geom_line(aes(y = predict(mdl0, dt_te), col = 'Modelo'), size=1, colour="red") +
   #scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Fecha", y = "Casos")
 
-#Plot model for dead
-ggplot(data=dt, aes(x=Fecha, y=Fallecidos)) +
+#Plot model for cases (model 1)
+ggplot(data=dt_te, aes(x=Fecha, y=Casos)) +
   geom_point(size=2, colour="blue") +
-  geom_line(aes(y = mdlFallecidos$fitted.values, col = 'Modelo'), size=1, colour="red") +
+  geom_line(aes(y = predict(mdlCasos, dt_te), col = 'Modelo'), size=1, colour="red") +
   #scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Fecha", y = "Fallecidos")
-
-#Plot model for hospitalised
-ggplot(data=dt, aes(x=Fecha, y=Hospitalizados)) +
-  geom_point(size=2, colour="blue") +
-  geom_line(aes(y = mdlHospitalizados$fitted.values, col = 'Modelo'), size=1, colour="red") +
-  #scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Fecha", y = "Hospitalizados")
-
-#Plot model for recovered
-ggplot(data=dt, aes(x=Fecha, y=Recuperados)) +
-  geom_point(size=2, colour="blue") +
-  geom_line(aes(y = mdlRecuperados$fitted.values, col = 'Modelo'), size=1, colour="red") +
-  #scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Fecha", y = "Recuperados")
-
-#Plot model for intensive care
-ggplot(data=dt, aes(x=Fecha, y=UCI)) +
-  geom_point(size=2, colour="blue") +
-  geom_line(aes(y = mdlUCI$fitted.values, col = 'Modelo'), size=1, colour="red") +
-  #scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Fecha", y = "UCI")
-
+  labs(x = "Fecha", y = "Casos")
 
 # There's clear overfitting, let's try elastic net
 library(glmnet)
-TuneEnet <- function(tAlpha){
-  
-  enTune <- cv.glmnet( x = mm, y = dt$Casos,
-                       nfolds = 4,
-                       alpha = tAlpha)
-  
-  return(enTune)
-}
 
-mm <- model.matrix(modelMatrixFormula, data=dt)
+mm_tr <- model.matrix(modelMatrixFormula, data=dt_tr)
+mm_te <- model.matrix(modelMatrixFormula, data=dt_te)
+
 # Let's try some hiperparameter search and cross-validation all at once
 #Ranges to search
 rangeAlpha <- c(0,1)
@@ -180,7 +86,7 @@ for (ii in 1:10){
   
   print(paste0("Testing Alpha: ",tAlpha))
   
-  enet <- TuneEnet(tAlpha)
+  enet <- TuneEnet(tAlpha, dt_tr, mm_tr)
   currScore <- min(deviance(enet$glmnet.fit))
   
   if( currScore < bestScore){
@@ -193,10 +99,9 @@ for (ii in 1:10){
   gc()
 }
 
-y <- predict(bestEnet, mm)
-#Plot model for cases
-ggplot(data=dt, aes(x=Fecha, y=Casos)) +
+#Plot model for cases (Elastic Net)
+ggplot(data=dt_te, aes(x=Fecha, y=Casos)) +
   geom_point(size=2, colour="blue") +
-  geom_line(aes(y = y, col = 'Modelo'), size=1, colour="red") +
+  geom_line(aes(y = predict(bestEnet, mm_te), col = 'Modelo'), size=1, colour="red") +
   #scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Fecha", y = "Casos")
