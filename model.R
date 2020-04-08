@@ -67,47 +67,13 @@ dt['wFallecidos'] <- wFallecidos
 dt['dRecuperados'] <- dRecuperados
 dt['wRecuperados'] <- wRecuperados
 
-# Make this smarter
-dt['hCasos1'] <- hCasos[,1]
-dt['hCasos2'] <- hCasos[,2]
-dt['hCasos3'] <- hCasos[,3]
-dt['hCasos4'] <- hCasos[,4]
-dt['hCasos5'] <- hCasos[,5]
-dt['hCasos6'] <- hCasos[,6]
-dt['hCasos7'] <- hCasos[,7]
-
-dt['hFallecidos1'] <- hFallecidos[,1]
-dt['hFallecidos2'] <- hFallecidos[,2]
-dt['hFallecidos3'] <- hFallecidos[,3]
-dt['hFallecidos4'] <- hFallecidos[,4]
-dt['hFallecidos5'] <- hFallecidos[,5]
-dt['hFallecidos6'] <- hFallecidos[,6]
-dt['hFallecidos7'] <- hFallecidos[,7]
-
-dt['hHospitalizados1'] <- hHospitalizados[,1]
-dt['hHospitalizados2'] <- hHospitalizados[,2]
-dt['hHospitalizados3'] <- hHospitalizados[,3]
-dt['hHospitalizados4'] <- hHospitalizados[,4]
-dt['hHospitalizados5'] <- hHospitalizados[,5]
-dt['hHospitalizados6'] <- hHospitalizados[,6]
-dt['hHospitalizados7'] <- hHospitalizados[,7]
-
-dt['hRecuperados1'] <- hRecuperados[,1]
-dt['hRecuperados2'] <- hRecuperados[,2]
-dt['hRecuperados3'] <- hRecuperados[,3]
-dt['hRecuperados4'] <- hRecuperados[,4]
-dt['hRecuperados5'] <- hRecuperados[,5]
-dt['hRecuperados6'] <- hRecuperados[,6]
-dt['hRecuperados7'] <- hRecuperados[,7]
-
-dt['hUCI1'] <- hUCI[,1]
-dt['hUCI2'] <- hUCI[,2]
-dt['hUCI3'] <- hUCI[,3]
-dt['hUCI4'] <- hUCI[,4]
-dt['hUCI5'] <- hUCI[,5]
-dt['hUCI6'] <- hUCI[,6]
-dt['hUCI7'] <- hUCI[,7]
-
+for (i in 1:7) {
+  dt[paste0('hCasos', i)] <- hCasos[,i]
+  dt[paste0('hFallecidos', i)] <- hFallecidos[,i]
+  dt[paste0('hHospitalizados', i)] <- hHospitalizados[,i]
+  dt[paste0('hRecuperados', i)] <- hRecuperados[,i]
+  dt[paste0('hUCI', i)] <- hUCI[,i]
+}
 
 rm(dCasos, dHospitalizados, dUCI, dFallecidos, dRecuperados)
 rm(wCasos, wHospitalizados, wUCI, wFallecidos, wRecuperados)
@@ -128,61 +94,33 @@ dt[(dt$Casos > 100), ]%>%
 # Model 0:
 mdl0 <- glm(formula = dt$Casos ~ dt$hCasos1+dt$hCasos2+dt$hCasos3+
               dt$hCasos4+dt$hCasos5+dt$hCasos6+dt$hCasos7)
+
+var_shortlist <- c("hCasos1", "hCasos2", "hCasos3", "hCasos4",
+                   "hCasos5", "hCasos6", "hCasos7",
+                   "hFallecidos1", "hFallecidos2", "hFallecidos3", "hFallecidos4",
+                   "hFallecidos5", "hFallecidos6", "hFallecidos7",
+                   "hHospitalizados1", "hHospitalizados2", "hHospitalizados3", "hHospitalizados4",
+                   "hHospitalizados5", "hHospitalizados6", "hHospitalizados7",
+                   "hRecuperados1", "hRecuperados2", "hRecuperados3", "hRecuperados4",
+                   "hRecuperados5", "hRecuperados6", "hRecuperados7",
+                   "hUCI1", "hUCI2", "hUCI3", "hUCI4",
+                   "hUCI5", "hUCI6", "hUCI7")
+
 # Model 1:
-mdlCasos <- glm(formula = dt$Casos ~ dt$hCasos1+dt$hCasos2+dt$hCasos3+
-              dt$hCasos4+dt$hCasos5+dt$hCasos6+dt$hCasos7+
-              dt$hFallecidos1+dt$hFallecidos2+dt$hFallecidos3+
-              dt$hFallecidos4+dt$hFallecidos5+dt$hFallecidos6+dt$hFallecidos7+
-              dt$hHospitalizados1+dt$hHospitalizados2+dt$hHospitalizados3+
-              dt$hHospitalizados4+dt$hHospitalizados5+dt$hHospitalizados6+dt$hHospitalizados7+
-              dt$hRecuperados1+dt$hRecuperados2+dt$hRecuperados3+
-              dt$hRecuperados4+dt$hRecuperados5+dt$hRecuperados6+dt$hRecuperados7+
-              dt$hUCI1+dt$hUCI2+dt$hUCI3+
-              dt$hUCI4+dt$hUCI5+dt$hUCI6+dt$hUCI7)
+modelMatrixFormula <- formula(dt[,c("Casos", var_shortlist)])
+mdlCasos <- glm(data = dt, formula = modelMatrixFormula)
 
-mdlFallecidos <- glm(formula = dt$Fallecidos ~ dt$hCasos1+dt$hCasos2+dt$hCasos3+
-                  dt$hCasos4+dt$hCasos5+dt$hCasos6+dt$hCasos7+
-                  dt$hFallecidos1+dt$hFallecidos2+dt$hFallecidos3+
-                  dt$hFallecidos4+dt$hFallecidos5+dt$hFallecidos6+dt$hFallecidos7+
-                  dt$hHospitalizados1+dt$hHospitalizados2+dt$hHospitalizados3+
-                  dt$hHospitalizados4+dt$hHospitalizados5+dt$hHospitalizados6+dt$hHospitalizados7+
-                  dt$hRecuperados1+dt$hRecuperados2+dt$hRecuperados3+
-                  dt$hRecuperados4+dt$hRecuperados5+dt$hRecuperados6+dt$hRecuperados7+
-                  dt$hUCI1+dt$hUCI2+dt$hUCI3+
-                  dt$hUCI4+dt$hUCI5+dt$hUCI6+dt$hUCI7)
+modelMatrixFormula <- formula(dt[,c("Fallecidos", var_shortlist)])
+mdlFallecidos <- glm(data = dt, formula = modelMatrixFormula)
 
-mdlHospitalizados <- glm(formula = dt$Hospitalizados ~ dt$hCasos1+dt$hCasos2+dt$hCasos3+
-                       dt$hCasos4+dt$hCasos5+dt$hCasos6+dt$hCasos7+
-                       dt$hFallecidos1+dt$hFallecidos2+dt$hFallecidos3+
-                       dt$hFallecidos4+dt$hFallecidos5+dt$hFallecidos6+dt$hFallecidos7+
-                       dt$hHospitalizados1+dt$hHospitalizados2+dt$hHospitalizados3+
-                       dt$hHospitalizados4+dt$hHospitalizados5+dt$hHospitalizados6+dt$hHospitalizados7+
-                       dt$hRecuperados1+dt$hRecuperados2+dt$hRecuperados3+
-                       dt$hRecuperados4+dt$hRecuperados5+dt$hRecuperados6+dt$hRecuperados7+
-                       dt$hUCI1+dt$hUCI2+dt$hUCI3+
-                       dt$hUCI4+dt$hUCI5+dt$hUCI6+dt$hUCI7)
+modelMatrixFormula <- formula(dt[,c("Hospitalizados", var_shortlist)])
+mdlHospitalizados <- glm(data = dt, formula = modelMatrixFormula)
 
-mdlRecuperados <- glm(formula = dt$Recuperados ~ dt$hCasos1+dt$hCasos2+dt$hCasos3+
-                       dt$hCasos4+dt$hCasos5+dt$hCasos6+dt$hCasos7+
-                       dt$hFallecidos1+dt$hFallecidos2+dt$hFallecidos3+
-                       dt$hFallecidos4+dt$hFallecidos5+dt$hFallecidos6+dt$hFallecidos7+
-                       dt$hHospitalizados1+dt$hHospitalizados2+dt$hHospitalizados3+
-                       dt$hHospitalizados4+dt$hHospitalizados5+dt$hHospitalizados6+dt$hHospitalizados7+
-                       dt$hRecuperados1+dt$hRecuperados2+dt$hRecuperados3+
-                       dt$hRecuperados4+dt$hRecuperados5+dt$hRecuperados6+dt$hRecuperados7+
-                       dt$hUCI1+dt$hUCI2+dt$hUCI3+
-                       dt$hUCI4+dt$hUCI5+dt$hUCI6+dt$hUCI7)
+modelMatrixFormula <- formula(dt[,c("Recuperados", var_shortlist)])
+mdlRecuperados <- glm(data = dt, formula = modelMatrixFormula)
 
-mdlUCI <- glm(formula = dt$UCI ~ dt$hCasos1+dt$hCasos2+dt$hCasos3+
-                       dt$hCasos4+dt$hCasos5+dt$hCasos6+dt$hCasos7+
-                       dt$hFallecidos1+dt$hFallecidos2+dt$hFallecidos3+
-                       dt$hFallecidos4+dt$hFallecidos5+dt$hFallecidos6+dt$hFallecidos7+
-                       dt$hHospitalizados1+dt$hHospitalizados2+dt$hHospitalizados3+
-                       dt$hHospitalizados4+dt$hHospitalizados5+dt$hHospitalizados6+dt$hHospitalizados7+
-                       dt$hRecuperados1+dt$hRecuperados2+dt$hRecuperados3+
-                       dt$hRecuperados4+dt$hRecuperados5+dt$hRecuperados6+dt$hRecuperados7+
-                       dt$hUCI1+dt$hUCI2+dt$hUCI3+
-                       dt$hUCI4+dt$hUCI5+dt$hUCI6+dt$hUCI7)
+modelMatrixFormula <- formula(dt[,c("UCI", var_shortlist)])
+mdlUCI <- glm(data = dt, formula = modelMatrixFormula)
 
 #Plot model for cases
 ggplot(data=dt, aes(x=Fecha, y=Casos)) +
@@ -218,3 +156,47 @@ ggplot(data=dt, aes(x=Fecha, y=UCI)) +
   geom_line(aes(y = mdlUCI$fitted.values, col = 'Modelo'), size=1, colour="red") +
   #scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Fecha", y = "UCI")
+
+
+# There's clear overfitting, let's try elastic net
+library(glmnet)
+TuneEnet <- function(tAlpha){
+  
+  enTune <- cv.glmnet( x = mm, y = dt$Casos,
+                       nfolds = 4,
+                       alpha = tAlpha)
+  
+  return(enTune)
+}
+
+mm <- model.matrix(modelMatrixFormula, data=dt)
+# Let's try some hiperparameter search and cross-validation all at once
+#Ranges to search
+rangeAlpha <- c(0,1)
+bestScore <-  Inf
+
+for (ii in 1:10){
+  tAlpha <- runif(n=1, min=rangeAlpha[1], max=rangeAlpha[2])
+  
+  print(paste0("Testing Alpha: ",tAlpha))
+  
+  enet <- TuneEnet(tAlpha)
+  currScore <- min(deviance(enet$glmnet.fit))
+  
+  if( currScore < bestScore){
+    cat(paste0("Alpha updated, now: ", tAlpha, "\n\n"))
+    bestScore <- currScore
+    bestEnet <- enet
+  }
+  
+  rm(enet, tAlpha, currScore)
+  gc()
+}
+
+y <- predict(bestEnet, mm)
+#Plot model for cases
+ggplot(data=dt, aes(x=Fecha, y=Casos)) +
+  geom_point(size=2, colour="blue") +
+  geom_line(aes(y = y, col = 'Modelo'), size=1, colour="red") +
+  #scale_y_log10(labels = comma_format(big.mark = " ")) +
+  labs(x = "Fecha", y = "Casos")
