@@ -63,10 +63,10 @@ FixData <- function(dt){
   
   rm(dCasos, dHospitalizados, dUCI, dFallecidos, dRecuperados)
   rm(wCasos, wHospitalizados, wUCI, wFallecidos, wRecuperados)
+  rm(hCasos, hFallecidos, hHospitalizados, hRecuperados, hUCI)
+  gc()
   return(dt)
 }
-
-
 
 TuneEnet <- function(tAlpha, dt, mm){
   

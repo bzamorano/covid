@@ -1,4 +1,5 @@
 library(utils)
+library(tidyverse)
 library(httr)
 library(ggplot2)
 library(tidyr)
@@ -11,8 +12,19 @@ GET("https://rubenfcasal.github.io/COVID-19/acumulados.RData",
     write_disk(tf <- "./acumulados.RData", overwrite = TRUE))
 load(tf)
 
+dt_tot <- acumulados  %>%
+  group_by(Fecha) %>%
+  summarise(Casos = sum(Casos),
+            Fallecidos = sum(Fallecidos),
+            Hospitalizados = sum(Hospitalizados),
+            Recuperados = sum(Recuperados),
+            UCI = sum(UCI)
+  )
+
+
 # Madrid: training sample. Catalonia: test sample
 dt_tr <- acumulados[acumulados$CCAA.ISO =="MD",c(3:8)]
+#dt_tr <- dt_tot
 dt_te <- acumulados[acumulados$CCAA.ISO =="CT",c(3:8)]
 
 dt_tr <- FixData(dt_tr)
@@ -67,11 +79,20 @@ ggplot(data=dt_te, aes(x=Fecha, y=Casos)) +
 ggplot(data=dt_te, aes(x=Fecha, y=Casos)) +
   geom_point(size=2, colour="blue") +
   geom_line(aes(y = predict(mdlCasos, dt_te), col = 'Modelo'), size=1, colour="red") +
-  #scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Fecha", y = "Casos")
 
 # There's clear overfitting, let's try elastic net
 library(glmnet)
+
+modelMatrixFormula <- formula(dt_tr[,c("Casos", var_shortlist)])
+
+#modelMatrixFormula <- update(modelMatrixFormula, ~ . + hCasos1 * hFallecidos1 
+#                             + hCasos1 * hUCI1
+#                             + hCasos1 * hHospitalizados1
+#                             + hCasos1 * hRecuperados1
+#                             + hCasos1 * hCasos2
+#                             + hUCI1 * hHospitalizados1)# add interactions
+
 
 mm_tr <- model.matrix(modelMatrixFormula, data=dt_tr)
 mm_te <- model.matrix(modelMatrixFormula, data=dt_te)
@@ -103,5 +124,20 @@ for (ii in 1:10){
 ggplot(data=dt_te, aes(x=Fecha, y=Casos)) +
   geom_point(size=2, colour="blue") +
   geom_line(aes(y = predict(bestEnet, mm_te), col = 'Modelo'), size=1, colour="red") +
-  #scale_y_log10(labels = comma_format(big.mark = " ")) +
+  labs(x = "Fecha", y = "Casos")
+
+# Just as a test, let's see a random forest
+library(randomForest)
+modelMatrixFormula <- formula(dt_tr[,c("Casos", var_shortlist)])
+
+rf <- randomForest(formula = modelMatrixFormula,
+                   type = regression,
+                   data = dt_tr,
+                   importance = TRUE,
+                   ntree = 300) # this is too small, but sufficient for demonstration purposes
+
+#Plot model for cases (Random forest)
+ggplot(data=dt_te, aes(x=Fecha, y=Casos)) +
+  geom_point(size=2, colour="blue") +
+  geom_line(aes(y = predict(rf, dt_te), col = 'Modelo'), size=1, colour="red") +
   labs(x = "Fecha", y = "Casos")
