@@ -5,6 +5,8 @@ library(tidyverse)
 library(tidyr)
 #theme_set(theme_bw())
 
+setwd("~/Work/covid")
+
 GET("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv", 
     authenticate(":", ":", type="ntlm"),
     write_disk(tf <- "./covid_data.csv", overwrite = TRUE))

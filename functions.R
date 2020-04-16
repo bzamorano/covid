@@ -3,19 +3,19 @@ FixData <- function(dt){
   
   dCasos          <- integer(nrows)
   wCasos          <- integer(nrows)
-  hCasos <- matrix(data = 0, nrow = nrows, ncol = 7)
+  hCasos <- matrix(data = 0, nrow = nrows, ncol = 10)
   dHospitalizados <- integer(nrows)
   wHospitalizados <- integer(nrows)
-  hHospitalizados <- matrix(data = 0, nrow = nrows, ncol = 7)
+  hHospitalizados <- matrix(data = 0, nrow = nrows, ncol = 10)
   dUCI            <- integer(nrows)
   wUCI            <- integer(nrows)
-  hUCI <- matrix(data = 0, nrow = nrows, ncol = 7)
+  hUCI <- matrix(data = 0, nrow = nrows, ncol = 10)
   dFallecidos     <- integer(nrows)
   wFallecidos     <- integer(nrows)
-  hFallecidos <- matrix(data = 0, nrow = nrows, ncol = 7)
+  hFallecidos <- matrix(data = 0, nrow = nrows, ncol = 10)
   dRecuperados    <- integer(nrows)
   wRecuperados    <- integer(nrows)
-  hRecuperados <- matrix(data = 0, nrow = nrows, ncol = 7)
+  hRecuperados <- matrix(data = 0, nrow = nrows, ncol = 10)
   
   for (i in 2:nrows) {
     dCasos[i]          <- dt$Casos[i]-dt$Casos[i-1]
@@ -24,7 +24,7 @@ FixData <- function(dt){
     dFallecidos[i]     <- dt$Fallecidos[i]-dt$Fallecidos[i-1]
     dRecuperados[i]    <- dt$Recuperados[i]-dt$Recuperados[i-1]
     
-    max_index <- max(2, i-7)
+    max_index <- max(2, i-10)
     wCasos[i] <- sum(dCasos[max_index:i])
     wHospitalizados[i] <- sum(dHospitalizados[max_index:i])
     wUCI[i] <- sum(dUCI[max_index:i])
@@ -32,7 +32,7 @@ FixData <- function(dt){
     wRecuperados[i] <- sum(dRecuperados[max_index:i])
     for (k in 1:(i-1)) {
       # print(paste("i", i, "k", k, "i-k:", i-k))
-      if(i-k < 8){
+      if(i-k < 11){
         hCasos[i, i-k] <- dt$Casos[k]
         hHospitalizados[i, i-k] <- dt$Hospitalizados[k]
         hUCI[i, i-k] <- dt$UCI[k]
@@ -53,7 +53,7 @@ FixData <- function(dt){
   dt['dRecuperados'] <- dRecuperados
   dt['wRecuperados'] <- wRecuperados
   
-  for (i in 1:7) {
+  for (i in 1:10) {
     dt[paste0('hCasos', i)] <- hCasos[,i]
     dt[paste0('hFallecidos', i)] <- hFallecidos[,i]
     dt[paste0('hHospitalizados', i)] <- hHospitalizados[,i]
@@ -75,4 +75,84 @@ TuneEnet <- function(tAlpha, dt, mm){
                        alpha = tAlpha)
   
   return(enTune)
+}
+
+TuneGBM <- function(LearnRate, NumTrees, Verbose, FittingParams){
+  library(parallel)
+  numCores <- detectCores()
+  numCores <- ifelse(is.na(numCores),1,numCores-1) 
+  
+  tDepth <- FittingParams[1]
+  tChild <- FittingParams[2]
+  tGamma <- FittingParams[3]
+  tSub <- FittingParams[4]
+  tCol <- FittingParams[5]
+  tAlpha <- FittingParams[6]
+  tLambda <- FittingParams[7]
+  
+  gbPar <- list("objective" = "reg:squarederror",
+                "booster" = "gbtree",
+                "silent" = 0,
+                "eta"=LearnRate,
+                "max_depth" = tDepth,
+                "min_child_weight" = tChild,
+                "gamma" = tGamma,
+                "subsample" = tSub,
+                "colsample_bytree" = tCol,
+                "alpha" = tAlpha,
+                "lambda" = tLambda,
+                "scale_pos_weight"=1,
+                "nthread" = numCores
+  )
+  
+  xgbTune <- xgb.cv(params =  gbPar,
+                    data = dmm_tr,
+                    nrounds = NumTrees,
+                    prediction = F,
+                    print_every_n = 5,
+                    maximize = F,
+                    verbose=Verbose,
+                    nfold=3,
+                    metrics="rmse",
+                    stratified = FALSE,
+                    early_stopping_rounds = 100)
+  return(xgbTune)
+}
+
+FitGBM <- function(LearnRate, NumTrees, Verbose, FittingParams){
+  library(parallel)
+  numCores <- detectCores()
+  numCores <- ifelse(is.na(numCores),1,numCores-1) 
+  
+  tDepth <- FittingParams[1]
+  tChild <- FittingParams[2]
+  tGamma <- FittingParams[3]
+  tSub <- FittingParams[4]
+  tCol <- FittingParams[5]
+  tAlpha <- FittingParams[6]
+  tLambda <- FittingParams[7]
+  
+  gbPar <- list("objective" = "reg:squarederror",
+                "booster" = "gbtree",
+                "silent" = 0,
+                "eta"=LearnRate,
+                "max_depth" = tDepth,
+                "min_child_weight" = tChild,
+                "gamma" = tGamma,
+                "subsample" = tSub,
+                "colsample_bytree" = tCol,
+                "alpha" = tAlpha,
+                "lambda" = tLambda,
+                "scale_pos_weight"=1,
+                "nthread" = numCores
+  )
+  
+  xgbMDL <- xgb.train(params =  gbPar,
+                      data = dmm_tr,
+                      nrounds = NumTrees,
+                      prediction = F,
+                      print_every_n = 5,
+                      maximize = F,
+                      verbose=Verbose)
+  return(xgbMDL)
 }
