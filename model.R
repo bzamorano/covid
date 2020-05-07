@@ -15,6 +15,7 @@ load(tf)
 
 dt_tot <- acumulados  %>%
   group_by(Fecha) %>%
+  filter(CCAA.ISO != "CT") %>% # Remove Catalonia until it works
   summarise(Casos = sum(Casos),
             Fallecidos = sum(Fallecidos),
             Hospitalizados = sum(Hospitalizados),
@@ -23,15 +24,16 @@ dt_tot <- acumulados  %>%
   )
 
 
-# Madrid: training sample. Catalonia: test sample
+# Madrid: training sample. Andalusia: test sample
 dt_tr <- acumulados[acumulados$CCAA.ISO =="MD",c(3:8)]
 #dt_tr <- dt_tot
-dt_te <- acumulados[acumulados$CCAA.ISO =="CT",c(3:8)]
+dt_te <- acumulados[acumulados$CCAA.ISO =="AN",c(3:8)]
 
 dt_tr <- FixData(dt_tr)
 dt_te <- FixData(dt_te)
+dt_tot <- FixData(dt_tot)
 
-dt_tr[(dt_tr$Casos > 100), ]%>%
+dt_tot[(dt_tot$Casos > 100), ]%>%
   ggplot(aes(x=Casos, y=wCasos)) +
   geom_line(size=1, colour="red") +
   scale_x_log10(labels = comma_format(big.mark = " ")) +
@@ -42,7 +44,7 @@ dt_tr[(dt_tr$Casos > 100), ]%>%
 mdl0 <- glm(formula = dt_tr$Casos ~ dt_tr$hCasos1+dt_tr$hCasos2+dt_tr$hCasos3+
               dt_tr$hCasos4+dt_tr$hCasos5+dt_tr$hCasos6+dt_tr$hCasos7)
 
-var_shortlist <- c("hCasos1", "hCasos2", "hCasos3", "hCasos4", "hCasos5",
+var_shortlist <- c("weekDay", "hCasos1", "hCasos2", "hCasos3", "hCasos4", "hCasos5",
                    "hCasos6", "hCasos7", "hCasos8", "hCasos9", "hCasos10",
                    "hFallecidos1", "hFallecidos2", "hFallecidos3", 
                    "hFallecidos4", "hFallecidos5", "hFallecidos6",
@@ -91,14 +93,6 @@ library(glmnet)
 
 modelMatrixFormula <- formula(dt_tr[,c("Casos", var_shortlist)])
 
-#modelMatrixFormula <- update(modelMatrixFormula, ~ . + hCasos1 * hFallecidos1 
-#                             + hCasos1 * hUCI1
-#                             + hCasos1 * hHospitalizados1
-#                             + hCasos1 * hRecuperados1
-#                             + hCasos1 * hCasos2
-#                             + hUCI1 * hHospitalizados1)# add interactions
-
-
 mm_tr <- model.matrix(modelMatrixFormula, data=dt_tr)
 mm_te <- model.matrix(modelMatrixFormula, data=dt_te)
 
@@ -140,7 +134,7 @@ rf <- randomForest(formula = modelMatrixFormula,
                    type = regression,
                    data = dt_tr,
                    importance = TRUE,
-                   ntree = 300) # A bit on the small side
+                   ntree = 500) # A bit on the small side
 
 #Plot model for cases (Random forest)
 ggplot(data=dt_te, aes(x=Fecha, y=Casos)) +

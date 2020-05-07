@@ -1,6 +1,7 @@
 FixData <- function(dt){
   nrows <- nrow(dt)
   
+  wDay            <- integer(nrows)
   dCasos          <- integer(nrows)
   wCasos          <- integer(nrows)
   hCasos <- matrix(data = 0, nrow = nrows, ncol = 10)
@@ -17,7 +18,11 @@ FixData <- function(dt){
   wRecuperados    <- integer(nrows)
   hRecuperados <- matrix(data = 0, nrow = nrows, ncol = 10)
   
+  wDay[1] <- format(dt_te$Fecha[1],"%w")
+  
   for (i in 2:nrows) {
+    wDay[i]           <- format(dt_te$Fecha[i],"%w")
+    
     dCasos[i]          <- dt$Casos[i]-dt$Casos[i-1]
     dHospitalizados[i] <- dt$Hospitalizados[i]-dt$Hospitalizados[i-1]
     dUCI[i]            <- dt$UCI[i]-dt$UCI[i-1]
@@ -42,6 +47,7 @@ FixData <- function(dt){
     }
   }
   
+  dt['weekDay'] <- as.factor(wDay)
   dt['dCasos'] <- dCasos
   dt['wCasos'] <- wCasos
   dt['dHospitalizados'] <- dHospitalizados
@@ -61,6 +67,7 @@ FixData <- function(dt){
     dt[paste0('hUCI', i)] <- hUCI[,i]
   }
   
+  rm(wDay)
   rm(dCasos, dHospitalizados, dUCI, dFallecidos, dRecuperados)
   rm(wCasos, wHospitalizados, wUCI, wFallecidos, wRecuperados)
   rm(hCasos, hFallecidos, hHospitalizados, hRecuperados, hUCI)

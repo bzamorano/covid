@@ -3,6 +3,7 @@ library(httr)
 library(ggplot2)
 library(tidyverse)
 library(tidyr)
+library(scales)
 #theme_set(theme_bw())
 
 setwd("~/Work/covid")
@@ -12,6 +13,10 @@ GET("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv",
     write_disk(tf <- "./covid_data.csv", overwrite = TRUE))
 
 data <- read.csv2(tf, sep=",", header = TRUE)
+
+# # Population (from Wikipedia)
+# pop <- read.csv("./population.csv")
+# data<-merge(x=data, y=pop, by.x = "countriesAndTerritories",  by.y = "Country",all.x=TRUE)
 
 # Fix the data first
 data[[1]] <- as.POSIXct(strptime(data[[1]], "%d/%m/%Y"))
@@ -44,15 +49,6 @@ data['totCases'] <- tot_sum
 data['weekDeath'] <- weekdeath
 data['totDeath'] <- death_sum
 
-dt_tot <- acumulados  %>%
-  group_by(Fecha) %>%
-  summarise(Casos = sum(Casos),
-            Fallecidos = sum(Fallecidos),
-            Hospitalizados = sum(Hospitalizados),
-            Recuperados = sum(Recuperados),
-            UCI = sum(UCI)
-  )
-
 data%>%
   group_by(dateRep) %>%
   summarise(Cases = sum(totCases)) %>%
@@ -61,8 +57,61 @@ data%>%
   scale_y_log10() +
   labs(x = "Date", y = "Total cases")
 
+# These two charts show that higher mortality rates are most likely linked to the
+# ability to count them efficiently than to any wrongdoing. Hence the overrepresentation
+# of small (easy to handle) and affluent (resourceful) countries in the top tier, and
+# big and poor countries in the lowest death rates
+
+# Top death rate
+data %>%
+  group_by(countriesAndTerritories) %>%
+  filter(max(popData2018) > 5000) %>%
+  filter(sum(deaths) > 20) %>%
+  summarise(Deaths = sum(deaths),
+            Population = max(popData2018),
+            Death_rate = sum(deaths) * 1.e6 / max(popData2018) ) %>%
+  arrange(desc(Death_rate)) %>%
+  slice(1:15) %>%
+  ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
+  geom_bar(fill = "red", colour = "darkred") +
+  coord_flip() +
+  annotate("text", x=14.8, y=1000, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=1000, label= "and at least 20 deaths") +
+  labs(x = "Country", y = "Deaths per million inhabitants")
+
+# Bottom death rate
+data %>%
+  group_by(countriesAndTerritories) %>%
+  filter(max(popData2018) > 5000) %>%
+  filter(sum(deaths) > 20) %>%
+  summarise(Deaths = sum(deaths),
+            Population = max(popData2018),
+            Death_rate = sum(deaths) * 1.e6 / max(popData2018) ) %>%
+  arrange((Death_rate)) %>%
+  slice(1:15) %>%
+  ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
+  geom_bar(fill = "blue", colour = "darkblue") +
+  coord_flip() +
+  annotate("text", x=14.8, y=2, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=2, label= "and at least 20 deaths") +
+  labs(x = "Country", y = "Deaths per million inhabitants")
+
+# By continent
+data %>%
+  group_by(countriesAndTerritories) %>%
+  summarise(Deaths = sum(deaths),
+            Population = max(popData2018),
+            Continent = first(continentExp)) %>%
+  group_by(Continent) %>%
+  summarise(Deaths = sum(Deaths, na.rm = TRUE),
+            Population = sum(Population, na.rm = TRUE)) %>%
+  ggplot(aes(x = reorder(Continent, -Population), y = Deaths)) +
+  geom_point(aes(size = Population), color = "darkred") +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
+  labs(x = "Continent", y = "Deaths")
+
 # This can be changed to account for more countries
-countries <- unique(data$countriesAndTerritories[data$totDeath > 1000 
+countries <- unique(data$countriesAndTerritories[data$totDeath > 5000 
                                     | data$countriesAndTerritories == "South_Korea"])
 small <- data[data$countriesAndTerritories %in% countries,]
 
@@ -93,16 +142,7 @@ small[(small$dateRep > "2020-02-29"), ]%>%
   geom_line(size=1) +
   labs(x = "Date", y = "Deaths / cases (%)", colour = "Country")
 
-library(scales)
-
-# Check a couple versions for deaths (test)
-small[(small$totCases > 100), ]%>%
-  ggplot(aes(x=totCases, y=weekDeath, colour = countriesAndTerritories)) +
-  geom_line(size=1) +
-  scale_x_log10(labels = comma_format(big.mark = " ")) +
-  scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Total cases", y = "Weekly deaths", colour = "Country")
-
+# Check a version for deaths (test)
 small[(small$totDeath > 100), ]%>%
   ggplot(aes(x=totDeath, y=weekDeath, colour = countriesAndTerritories)) +
   geom_line(size=1) +
