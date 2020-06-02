@@ -65,6 +65,28 @@ data%>%
 # of small (easy to handle) and affluent (resourceful) countries in the top tier, and
 # big and poor countries in the lowest death rates
 
+# Top Cases
+data %>%
+  group_by(countriesAndTerritories) %>%
+  summarise(Cases = sum(cases)) %>%
+  arrange(desc(Cases)) %>%
+  slice(1:15) %>%
+  ggplot(aes(x = reorder(countriesAndTerritories, Cases), weight = Cases)) +
+  geom_bar(fill = "darkblue", colour = "darkblue") +
+  coord_flip() +
+  labs(x = "Country", y = "Cases")
+
+# Top deaths
+data %>%
+  group_by(countriesAndTerritories) %>%
+  summarise(Deaths = sum(deaths)) %>%
+  arrange(desc(Deaths)) %>%
+  slice(1:15) %>%
+  ggplot(aes(x = reorder(countriesAndTerritories, Deaths), weight = Deaths)) +
+  geom_bar(fill = "darkred", colour = "darkred") +
+  coord_flip() +
+  labs(x = "Country", y = "Deaths")
+
 # Top death rate
 data %>%
   group_by(countriesAndTerritories) %>%
