@@ -15,7 +15,6 @@ load(tf)
 
 dt_tot <- acumulados  %>%
   group_by(Fecha) %>%
-  filter(CCAA.ISO != "CT") %>% # Remove Catalonia until it works
   summarise(Casos = sum(Casos),
             Fallecidos = sum(Fallecidos),
             Hospitalizados = sum(Hospitalizados),

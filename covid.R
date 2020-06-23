@@ -90,11 +90,11 @@ data %>%
 # Top death rate
 data %>%
   group_by(countriesAndTerritories) %>%
-  filter(max(popData2018) > 5000) %>%
+  filter(max(popData2019) > 5000) %>%
   filter(sum(deaths) > 100) %>%
   summarise(Deaths = sum(deaths),
-            Population = max(popData2018),
-            Death_rate = sum(deaths) * 1.e6 / max(popData2018) ) %>%
+            Population = max(popData2019),
+            Death_rate = sum(deaths) * 1.e6 / max(popData2019) ) %>%
   arrange(desc(Death_rate)) %>%
   slice(1:15) %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
@@ -107,11 +107,11 @@ data %>%
 # Bottom death rate
 data %>%
   group_by(countriesAndTerritories) %>%
-  filter(max(popData2018) > 5000) %>%
+  filter(max(popData2019) > 5000) %>%
   filter(sum(deaths) > 100) %>%
   summarise(Deaths = sum(deaths),
-            Population = max(popData2018),
-            Death_rate = sum(deaths) * 1.e6 / max(popData2018) ) %>%
+            Population = max(popData2019),
+            Death_rate = sum(deaths) * 1.e6 / max(popData2019) ) %>%
   arrange((Death_rate)) %>%
   slice(1:15) %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
@@ -125,7 +125,7 @@ data %>%
 data %>%
   group_by(countriesAndTerritories) %>%
   summarise(Deaths = sum(deaths),
-            Population = max(popData2018),
+            Population = max(popData2019),
             Continent = first(continentExp)) %>%
   group_by(Continent) %>%
   summarise(Deaths = sum(Deaths, na.rm = TRUE),
@@ -139,7 +139,7 @@ data %>%
 data %>%
   group_by(countriesAndTerritories) %>%
   summarise(Deaths = sum(deaths),
-            Population = max(popData2018),
+            Population = max(popData2019),
             Continent = first(continentExp)) %>%
   group_by(Continent) %>%
   summarise(Deaths = sum(Deaths, na.rm = TRUE),
@@ -151,9 +151,10 @@ data %>%
   scale_x_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Population", y = "Deaths")
 
-# This can be changed to account for more countries
-countries <- unique(data$countriesAndTerritories[data$totDeath > 10000 
-                                    | data$countriesAndTerritories == "South_Korea"])
+# This can be changed to account for more countries. W or W/O South Korea
+# countries <- unique(data$countriesAndTerritories[data$totDeath > 10000 
+#                                     | data$countriesAndTerritories == "South_Korea"])
+countries <- unique(data$countriesAndTerritories[data$totDeath > 10000])
 small <- data[data$countriesAndTerritories %in% countries,]
 
 small%>%
