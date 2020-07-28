@@ -1,0 +1,13 @@
+name: covid-countries
+title: covid-countries
+username:
+account: bzamorano
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2555942
+bundleId: 3375740
+url: https://bzamorano.shinyapps.io/covid-countries/
+when: 1594376203.654
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: covid_data.csv
