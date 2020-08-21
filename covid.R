@@ -63,8 +63,8 @@ data%>%
   group_by(dateRep) %>%
   summarise(Cases = sum(totCases)) %>%
   ggplot(aes(x=dateRep, y=Cases)) +
-  geom_line() +
-  scale_y_log10() +
+  geom_line(colour = "red", size = 1.25) +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Date", y = "Total cases")
 
 # These two charts show that higher mortality rates are most likely linked to the
@@ -113,10 +113,10 @@ data %>%
   arrange(desc(Death_rate)) %>%
   slice(1:15) %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
-  geom_bar(fill = "red", colour = "darkred") +
+  geom_bar(fill = "darkred", colour = "darkred") +
   coord_flip() +
-  annotate("text", x=14.8, y=625, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=625, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=700, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=700, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Bottom death rate
@@ -132,8 +132,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "blue", colour = "darkblue") +
   coord_flip() +
-  annotate("text", x=14.8, y=9.5, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=9.5, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=6, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=6, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Continent timeline
@@ -170,7 +170,7 @@ data_continents  %>%
   ggplot(aes(x = dateRep, y = totCases, colour = continentExp)) +
   geom_line(size=1) +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Date", y = "Total cases")
+  labs(x = "Date", y = "Total cases", colour = "Continent")
 
 data_continents  %>%
   group_by(dateRep, continentExp) %>%
@@ -178,7 +178,7 @@ data_continents  %>%
   ggplot(aes(x = dateRep, y = totDeath, colour = continentExp)) +
   geom_line(size=1) +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Date", y = "Total deaths")
+  labs(x = "Date", y = "Total deaths", colour = "Continent")
 
 
 # Fraction of cases vs time
@@ -225,6 +225,7 @@ blank_theme <- theme_minimal()+
 
 my_percent <- label_percent( accuracy = 1)
 
+# World population
 data_continents %>%
   group_by(Continent) %>%
   summarise(Population = max(Population, na.rm = TRUE)) %>%
@@ -238,6 +239,7 @@ data_continents %>%
   geom_text(aes(label = my_percent(Population/sum(Population))), position = position_stack(vjust = 0.5), check_overlap = TRUE) +
   labs(x = "", y = paste("Total World population:", TotalWorldPop) )
 
+#Death distribution pie
 data_continents %>%
   group_by(Continent) %>%
   summarise(Deaths = sum(Deaths, na.rm = TRUE)) %>%
@@ -307,25 +309,28 @@ data_continents %>%
 # This can be changed to account for more countries. W or W/O South Korea
 # countries <- unique(data$countriesAndTerritories[data$totDeath > 10000 
 #                                     | data$countriesAndTerritories == "South_Korea"])
-countries <- unique(data$countriesAndTerritories[data$totDeath > 10000])
+countries <- unique(data$countriesAndTerritories[data$totDeath > 20000])
 small <- data[data$countriesAndTerritories %in% countries,]
+
+# Reorder by case appearance
+small$countriesAndTerritories <- with(small, reorder(countriesAndTerritories, desc(totCases)))
 
 small[(small$dateRep > "2020-02-29"), ]%>%
   ggplot(aes(x=dateRep, y = weekNew*(weekNew>0), colour = countriesAndTerritories)) +
   geom_line(size=1) +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Date", y = "Weekly cases", colour = "Country")
 
 small[(small$dateRep > "2020-02-29"), ]%>%
   filter(countriesAndTerritories == "Spain") %>%
   ggplot(aes(x=dateRep, y = weekNew*(weekNew>0), colour = countriesAndTerritories)) +
   geom_line(size=1) +
-  scale_y_log10() +
   labs(x = "Date", y = "Weekly cases", colour = "Country")
 
 small[(small$dateRep > "2020-02-29"), ]%>%
   ggplot(aes(x=dateRep, y=totCases, colour = countriesAndTerritories)) +
   geom_line(size=1) +
-  scale_y_log10() +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Date", y = "Total cases", colour = "Country")
 
 small[(small$dateRep > "2020-02-29"), ]%>%
@@ -342,7 +347,7 @@ small[(small$dateRep > "2020-02-29"), ]%>%
 small[(small$dateRep > "2020-02-29"), ]%>%
   ggplot(aes(x=dateRep, y=totDeath, colour = countriesAndTerritories)) +
   geom_line(size=1) +
-  scale_y_log10() +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Date", y = "Total deaths", colour = "Country")
 
 small[(small$dateRep > "2020-02-29"), ]%>%
@@ -350,16 +355,7 @@ small[(small$dateRep > "2020-02-29"), ]%>%
   geom_line(size=1) +
   labs(x = "Date", y = "Deaths / cases (%)", colour = "Country")
 
-# Check a version for deaths (test)
-small[(small$totDeath > 100), ]%>%
-  ggplot(aes(x=totDeath, y=weekDeath, colour = countriesAndTerritories)) +
-  geom_line(size=1) +
-  geom_line((aes(x=totDeath, y=totDeath)), colour = "grey" ) +
-  scale_x_log10(labels = comma_format(big.mark = " ")) +
-  scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Total deaths", y = "Weekly deaths", colour = "Country")
-
-# But the real deal is this:
+# Evolution of the pandemic
 small[(small$totCases > 100), ]%>%
   ggplot(aes(x=totCases, y=weekNew, colour = countriesAndTerritories)) +
   geom_line(size=1) +
@@ -368,52 +364,19 @@ small[(small$totCases > 100), ]%>%
   scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Total cases", y = "Weekly new cases", colour = "Country")
 
+# And in terms of deaths
+small[(small$totDeath > 100), ]%>%
+  ggplot(aes(x=totDeath, y=weekDeath, colour = countriesAndTerritories)) +
+  geom_line(size=1) +
+  geom_line((aes(x=totDeath, y=totDeath)), colour = "grey" ) +
+  scale_x_log10(labels = comma_format(big.mark = " ")) +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
+  labs(x = "Total deaths", y = "Weekly deaths", colour = "Country")
+
 
 #### Interactive graphic ####
 # A bit of Shiny!
 library(shiny)
-
-ui2 <- fluidPage(
-  dateInput("date1", "Date:", value = "2020-07-26"),
-  
-  plotOutput(outputId = "pie")
-)
-
-server2 <- function(input, output) {
-  
-  get_plot <- function(date1){
-    data_continents <- data[data$dateRep<=date1,] %>%
-      group_by(countriesAndTerritories) %>%
-      summarise(Deaths = sum(deaths),
-                Population = max(popData2019),
-                Continent = first(continentExp)) %>%
-      group_by(Continent)
-    
-    TotalWorldDeaths <- sum(data_continents$Deaths, na.rm = TRUE)
-    TotalWorldPop <- sum(data_continents$Population, na.rm = TRUE)
-    
-    pie1 <- data_continents %>%
-      group_by(Continent) %>%
-      summarise(Deaths = sum(Deaths, na.rm = TRUE)) %>%
-      ggplot(aes(x = "", y = Deaths, fill = Continent)) +
-      geom_bar(width = 1, stat = "identity" ) +
-      coord_polar("y", start=0) +
-      scale_fill_brewer(palette = "Set1") +
-      theme(axis.text.x=element_blank()) +
-      labs(x = "", y = paste("Total deaths:", TotalWorldDeaths) )
-    
-    return(pie1)
-  }
-  
-  output$pie <- renderPlot( { 
-    get_plot(input$date1)
-  } )
-  
-}
-
-shinyApp(ui = ui2, server = server2)
-
-
 dt <- (data %>%
   group_by(countriesAndTerritories) %>%
   summarise(Deaths = sum(deaths)/1e3,
@@ -428,7 +391,7 @@ ui <- fluidPage(
               value = c(10,350), min = 0, max = 1500, step = 10),
   sliderInput(inputId = "deaths",
               label = "Deaths in thousand",
-              value = c(1,180), min = 0, max = 180),
+              value = c(1,180), min = 0, max = 200),
   # Output
   plotOutput(outputId = "graph", hover = hoverOpts(id = "plot_hover")),
   verbatimTextOutput("hover_info")
