@@ -6,6 +6,17 @@ library(tidyr)
 library(scales)
 theme_set(theme_minimal())
 
+# Some style definitions #
+blank_theme <- theme_minimal()+
+  theme(
+    panel.border = element_blank(),
+    panel.grid=element_blank(),
+    axis.ticks = element_blank(),
+    plot.title=element_text(size=14, face="bold")
+  )
+my_percent <- label_percent( accuracy = 1)
+
+# Download the data
 setwd("~/Work/covid")
 
 GET("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv", 
@@ -59,6 +70,9 @@ data['totCases'] <- tot_sum
 data['weekDeath'] <- weekdeath
 data['totDeath'] <- death_sum
 
+rm(dt, countries, country, death_sum, i, irows, min_index, n_rows, tf, tot_sum,
+   weekdeath, weeknew, nrows)
+
 data%>%
   group_by(dateRep) %>%
   summarise(Cases = sum(totCases)) %>%
@@ -102,6 +116,23 @@ data %>%
   scale_y_continuous(labels = comma_format(big.mark = " ")) +
   labs(x = "Country", y = "Deaths")
 
+# Top cases rate
+data %>%
+  group_by(countriesAndTerritories) %>%
+  filter(max(popData2019) > 5000) %>%
+  filter(sum(deaths) > 100) %>%
+  summarise(Cases = sum(cases),
+            Population = max(popData2019),
+            Cases_rate = sum(cases) * 1.e3 / max(popData2019) ) %>%
+  arrange(desc(Cases_rate)) %>%
+  slice(1:15) %>%
+  ggplot(aes(x = reorder(countriesAndTerritories, -Cases_rate), weight = Cases_rate)) +
+  geom_bar(fill = "orange", colour = "orange") +
+  coord_flip() +
+  annotate("text", x=14.8, y=35, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=35, label= "and at least 100 deaths") +
+  labs(x = "Country", y = "Cases per thousand inhabitants")
+
 # Top death rate
 data %>%
   group_by(countriesAndTerritories) %>%
@@ -115,8 +146,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "darkred", colour = "darkred") +
   coord_flip() +
-  annotate("text", x=14.8, y=700, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=700, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=800, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=800, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Bottom death rate
@@ -132,8 +163,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "blue", colour = "darkblue") +
   coord_flip() +
-  annotate("text", x=14.8, y=6, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=6, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=9, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=9, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Continent timeline
@@ -163,6 +194,8 @@ for (continent in continents) {
 data_continents['totDeath'] <- death_sum
 data_continents['totCases'] <- cases_sum
 
+rm(dt, cases_sum, continent, continents, death_sum, i, irows, n_rows, nrows)
+
 #Timelines by continent
 data_continents  %>%
   group_by(dateRep, continentExp) %>%
@@ -179,7 +212,6 @@ data_continents  %>%
   geom_line(size=1) +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Date", y = "Total deaths", colour = "Continent")
-
 
 # Fraction of cases vs time
 data_continents  %>%
@@ -203,7 +235,6 @@ data_continents  %>%
   scale_y_continuous(labels = scales::percent) +
   labs(x = "Date", y = "Fraction of deaths", fill = "Continent")
 
-
 # Get data by continent
 data_continents <- data %>%
   group_by(countriesAndTerritories) %>%
@@ -214,16 +245,6 @@ data_continents <- data %>%
 
 TotalWorldDeaths <- sum(data_continents$Deaths, na.rm = TRUE)
 TotalWorldPop <- sum(data_continents$Population, na.rm = TRUE)
-
-blank_theme <- theme_minimal()+
-  theme(
-    panel.border = element_blank(),
-    panel.grid=element_blank(),
-    axis.ticks = element_blank(),
-    plot.title=element_text(size=14, face="bold")
-  )
-
-my_percent <- label_percent( accuracy = 1)
 
 # World population
 data_continents %>%
@@ -267,50 +288,14 @@ data_continents %>%
   scale_colour_brewer(palette = "Set3") +
   labs(x = "Population", y = "Deaths")
 
-## Animation!
-#date_list <- seq.Date(from = as.Date("2020-01-01"), to = Sys.Date()-2, by = "day")
-
-#for (date in date_list) {
-#  date <- as.Date(date, origin = "1970-01-01")
-#  anim <- data[data$dateRep<= date,] %>%
-#    group_by(countriesAndTerritories) %>%
-#    summarise(Deaths = sum(deaths),
-#              Population = max(popData2019),
-#              Continent = first(continentExp)) %>%
-#    group_by(Continent)
-  
-#  TotalWorldDeaths <- sum(anim$Deaths, na.rm = TRUE)
-
-#  p <- anim %>%
-#    summarise(Deaths = sum(Deaths, na.rm = TRUE)) %>%
-#    ggplot(aes(x = "", y = Deaths, fill = Continent)) +
-#    geom_bar(width = 1, stat = "identity" ) +
-#    coord_polar("y", start=0) +
-#    scale_fill_brewer(palette = "Set1") +
-#    blank_theme +
-#    theme(axis.text.x=element_blank()) +
-#    geom_text(aes(label = my_percent(Deaths/sum(Deaths))), position = position_stack(vjust = 0.5), check_overlap = TRUE) +
-#    labs(x = "", y = paste("Total covid-19 deaths:", TotalWorldDeaths) )
-  
-#  plot(p)
-#  ggsave(filename = paste0("fig/fig_", date,".png"))
-#}
-
-#library(magick)
-#library(animation)
-#library(purrr)
-
-#list.files(path = "./fig", pattern = "*.png", full.names = TRUE) %>% 
-#  map(image_read) %>% # reads each path file
-#  image_join() %>% # joins image
-#  image_animate(fps=5) %>% # animates
-#  image_write("animation.gif") # write to current dir
+rm(TotalWorldDeaths, TotalWorldPop)
 
 # This can be changed to account for more countries. W or W/O South Korea
 # countries <- unique(data$countriesAndTerritories[data$totDeath > 10000 
 #                                     | data$countriesAndTerritories == "South_Korea"])
 countries <- unique(data$countriesAndTerritories[data$totDeath > 20000])
 small <- data[data$countriesAndTerritories %in% countries,]
+rm(countries)
 
 # Reorder by case appearance
 small$countriesAndTerritories <- with(small, reorder(countriesAndTerritories, desc(totCases)))
@@ -391,7 +376,7 @@ ui <- fluidPage(
               value = c(10,350), min = 0, max = 1500, step = 10),
   sliderInput(inputId = "deaths",
               label = "Deaths in thousand",
-              value = c(1,180), min = 0, max = 200),
+              value = c(1,200), min = 0, max = 300),
   # Output
   plotOutput(outputId = "graph", hover = hoverOpts(id = "plot_hover")),
   verbatimTextOutput("hover_info")
