@@ -1,6 +1,5 @@
 library(utils)
 library(httr)
-library(ggplot2)
 library(tidyverse)
 library(tidyr)
 library(scales)
@@ -301,7 +300,7 @@ rm(TotalWorldDeaths, TotalWorldPop)
 # This can be changed to account for more countries. W or W/O South Korea
 # countries <- unique(data$countriesAndTerritories[data$totDeath > 10000 
 #                                     | data$countriesAndTerritories == "South_Korea"])
-countries <- unique(data$countriesAndTerritories[data$totDeath > 25000])
+countries <- unique(data$countriesAndTerritories[data$totDeath > 30000])
 small <- data[data$countriesAndTerritories %in% countries,]
 rm(countries)
 
@@ -408,7 +407,6 @@ p <- small[(small$dateRep > "2020-02-29"), ]%>%
 p
 p + transition_reveal(dateRep)
 anim_save(filename = "spain_evolution.gif")
-rm(p)
 
 small[(small$dateRep > "2020-02-29"), ]%>%
   ggplot(aes(x=dateRep, y=totDeath, colour = countriesAndTerritories)) +
