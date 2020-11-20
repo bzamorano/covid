@@ -136,8 +136,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Cases_rate), weight = Cases_rate)) +
   geom_bar(fill = "orange", colour = "orange") +
   coord_flip() +
-  annotate("text", x=14.8, y=40, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=40, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=45, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=45, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Cases per thousand inhabitants")
 
 # Top death rate
@@ -153,8 +153,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "darkred", colour = "darkred") +
   coord_flip() +
-  annotate("text", x=14.8, y=900, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=900, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=1050, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=1050, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Bottom death rate
@@ -170,8 +170,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "blue", colour = "darkblue") +
   coord_flip() +
-  annotate("text", x=14.8, y=10, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=10, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=9, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=9, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Continent timeline
@@ -300,7 +300,7 @@ rm(TotalWorldDeaths, TotalWorldPop)
 # This can be changed to account for more countries. W or W/O South Korea
 # countries <- unique(data$countriesAndTerritories[data$totDeath > 10000 
 #                                     | data$countriesAndTerritories == "South_Korea"])
-countries <- unique(data$countriesAndTerritories[data$totDeath > 30000])
+countries <- unique(data$countriesAndTerritories[data$totDeath > 40000] )
 small <- data[data$countriesAndTerritories %in% countries,]
 rm(countries)
 
