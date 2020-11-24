@@ -80,13 +80,25 @@ data['weekDeath'] <- weekdeath
 rm(dt, countries, country, death_sum, i, irows, min_index, min_index2, n_rows, tf, 
    tot_sum, weekdeath, weeknew, fortnightnew, nrows)
 
+
+dd <- data%>%
+  group_by(dateRep) %>%
+  summarise(Cases = sum(totCases)) %>%
+  arrange(desc(Cases)) %>%
+  slice(1:1)
+
+TotWorldCases <- sum(dd$Cases)
+LastDay <- max(dd$dateRep)
+rm(dd)
+
 data%>%
   group_by(dateRep) %>%
   summarise(Cases = sum(totCases)) %>%
   ggplot(aes(x=dateRep, y=Cases)) +
   geom_line(colour = "red", size = 1.25) +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Date", y = "Total cases")
+  labs(x = "Date", y = "Total cases") +
+  annotate("text", x=LastDay-86400*60, y=1500, label= paste("Total cases:", TotWorldCases))
 
 # These two charts show that higher mortality rates are most likely linked to the
 # ability to count them efficiently than to any wrongdoing. Hence the overrepresentation
