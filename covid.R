@@ -5,6 +5,8 @@ library(tidyr)
 library(scales)
 theme_set(theme_minimal())
 
+ggplot <- function(...) ggplot2::ggplot(...) + scale_color_brewer(palette="Set1")
+
 # Some style definitions #
 blank_theme <- theme_minimal()+
   theme(
@@ -28,6 +30,7 @@ data <- read.csv2(tf, sep=",", header = TRUE)
 data[data=="United_States_of_America"]<-"USA"
 data[data=="United_Kingdom"]<-"UK"
 data[data=="Democratic_Republic_of_the_Congo"]<-"DR_Congo"
+data[data=="Bosnia_and_Herzegovina"]<-"Bosnia_Herz"
 
 spain <- data[data$countriesAndTerritories == "Spain",]
 
@@ -148,8 +151,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Cases_rate), weight = Cases_rate)) +
   geom_bar(fill = "orange", colour = "orange") +
   coord_flip() +
-  annotate("text", x=14.8, y=45, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=45, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=53, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=53, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Cases per thousand inhabitants")
 
 # Top death rate
@@ -165,8 +168,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "darkred", colour = "darkred") +
   coord_flip() +
-  annotate("text", x=14.8, y=1050, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=1050, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=1250, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=1250, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Bottom death rate
@@ -239,7 +242,7 @@ data_continents  %>%
   mutate(percentage = n / sum(n)) %>%
   ggplot(aes(x = dateRep, y = percentage, fill = continentExp)) +
   geom_area() +
-  scale_fill_brewer(palette = "Set3") +
+  scale_fill_brewer(palette = "Set1") +
   scale_y_continuous(labels = scales::percent) +
   labs(x = "Date", y = "Fraction of cases", fill = "Continent")
 
@@ -250,7 +253,7 @@ data_continents  %>%
   mutate(percentage = n / sum(n)) %>%
   ggplot(aes(x = dateRep, y = percentage, fill = continentExp)) +
   geom_area() +
-  scale_fill_brewer(palette = "Set3") +
+  scale_fill_brewer(palette = "Set1") +
   scale_y_continuous(labels = scales::percent) +
   labs(x = "Date", y = "Fraction of deaths", fill = "Continent")
 
@@ -273,7 +276,7 @@ data_continents %>%
   ggplot(aes(x = "", y = Population, fill = Continent)) +
   geom_bar(width = 1, stat = "identity" ) +
   coord_polar("y", start=0) +
-  scale_fill_brewer(palette = "Set3") +
+  scale_fill_brewer(palette = "Set1") +
   blank_theme +
   theme(axis.text.x=element_blank()) +
   geom_text(aes(label = my_percent(Population/sum(Population))), position = position_stack(vjust = 0.5), check_overlap = TRUE) +
@@ -287,7 +290,7 @@ data_continents %>%
   ggplot(aes(x = "", y = Deaths, fill = Continent)) +
   geom_bar(width = 1, stat = "identity" ) +
   coord_polar("y", start=0) +
-  scale_fill_brewer(palette = "Set3") +
+  scale_fill_brewer(palette = "Set1") +
   blank_theme +
   theme(axis.text.x=element_blank()) +
   geom_text(aes(label = my_percent(Deaths/sum(Deaths))), position = position_stack(vjust = 0.5), check_overlap = TRUE) +
@@ -304,7 +307,6 @@ data_continents %>%
   geom_smooth(aes(x = Population, y = Deaths), method = "glm", col = "brown") +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
   scale_x_log10(labels = comma_format(big.mark = " ")) +
-  scale_colour_brewer(palette = "Set3") +
   labs(x = "Population", y = "Deaths")
 
 rm(TotalWorldDeaths, TotalWorldPop)
@@ -312,7 +314,7 @@ rm(TotalWorldDeaths, TotalWorldPop)
 # This can be changed to account for more countries. W or W/O South Korea
 # countries <- unique(data$countriesAndTerritories[data$totDeath > 10000 
 #                                     | data$countriesAndTerritories == "South_Korea"])
-countries <- unique(data$countriesAndTerritories[data$totDeath > 40000] )
+countries <- unique(data$countriesAndTerritories[data$totDeath > 45000] )
 small <- data[data$countriesAndTerritories %in% countries,]
 rm(countries)
 
@@ -468,7 +470,7 @@ ui <- fluidPage(
               value = c(0,350), min = 0, max = 1500, step = 10),
   sliderInput(inputId = "deaths",
               label = "Deaths in thousand",
-              value = c(0,300), min = 0, max = 500, step = 10),
+              value = c(0,500), min = 0, max = 500, step = 10),
   # Output
   plotOutput(outputId = "graph", hover = hoverOpts(id = "plot_hover")),
   verbatimTextOutput("hover_info")
