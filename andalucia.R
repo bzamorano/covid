@@ -5,7 +5,7 @@ library(scales)
 theme_set(theme_minimal())
 ggplot <- function(...) ggplot2::ggplot(...) + scale_color_brewer(palette="Set1")
 
-data <- read.csv2("~/Work/covid_AND/cs_export.txt", sep=";", header = TRUE)
+data <- read.csv2("~/Work/covid/cs_export.txt", sep=";", header = TRUE)
 
 #Remove spurious last column
 data <- data[,1:4]
