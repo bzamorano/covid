@@ -149,8 +149,8 @@ dd%>%
   filter(Provincia == "Granada") %>%
   ggplot(aes(x = Fecha)) +
   geom_line(aes(y = Confirmados_7d*(Confirmados_7d > 0)), colour = "blue", size = 1) + 
-  geom_line(aes(y = 10*Fallecidos_7d*(Fallecidos_7d > 0)), colour = "red", size = 1) +
-  scale_y_continuous(sec.axis = sec_axis(~ . / 10, name = "Fallecidos 7 días")) +
+  geom_line(aes(y = 50*Fallecidos_7d*(Fallecidos_7d > 0)), colour = "red", size = 1) +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 50, name = "Fallecidos 7 días")) +
   theme( axis.line.y.right = element_line(color = "red"), 
          axis.ticks.y.right = element_line(color = "red"),
          axis.text.y.right = element_text(color = "red"),
@@ -159,14 +159,16 @@ dd%>%
          axis.ticks.y.left = element_line(color = "blue"),
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=7500, 
+           label= paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=6800, 
-           label= paste("Casos 7 días:", WeekCasesGRX)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=6300, 
-           label= paste("Fallecidos 7 días:", WeekDeathsGRX)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=5600,
-           label= paste("Total casos:", TotCasesGRX)) +
+           label= paste("Casos 7 días:", WeekCasesGRX), color = "blue") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=6300,
+           label= paste("Total casos:", TotCasesGRX), color = "blue") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=5600, 
+           label= paste("Fallecidos 7 días:", WeekDeathsGRX), color = "red") +
   annotate("text", x=as.POSIXct("2020-04-15"), y=5100,
-           label= paste("Total fallecidos:", TotDeathsGRX)) +
+           label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 7 días")
 
 # Y a 14 días
