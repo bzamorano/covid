@@ -88,8 +88,9 @@ data%>%
   geom_line(size = 1.25) +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Fecha", y = "Casos totales") +
-  annotate("text", x=LastDay-86400*45, y=300, label= paste("Casos totales:", TotCases)) +
-  annotate("text", x=LastDay-86400*45, y=150, label= paste("Granada:", TotCasesGRX))
+  annotate("text", x=LastDay-86400*45, y=300, label= LastDay) +
+  annotate("text", x=LastDay-86400*45, y=150, label= paste("Casos totales:", TotCases)) +
+  annotate("text", x=LastDay-86400*45, y=75, label= paste("Granada:", TotCasesGRX))
 
 # Fallecidos totales
 data%>%
@@ -98,8 +99,9 @@ data%>%
   geom_line(size = 1.25) +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Fecha", y = "Fallecidos totales") +
-  annotate("text", x=LastDay-86400*45, y=30, label= paste("Fallecidos totales:", TotDeaths)) +
-  annotate("text", x=LastDay-86400*45, y=15, label= paste("Granada:", TotDeathsGRX))
+  annotate("text", x=LastDay-86400*45, y=27, label= LastDay) +
+  annotate("text", x=LastDay-86400*45, y=18, label= paste("Fallecidos totales:", TotDeaths)) +
+  annotate("text", x=LastDay-86400*45, y=12, label= paste("Granada:", TotDeathsGRX))
 
 # Confirmados 7 dias
 dd%>%
@@ -143,14 +145,13 @@ FortnightCasesGRX  <- first(dd$Confirmados_14d[dd$Provincia == "Granada"])
 FortnightUCIGRX <- first(dd$UCI_14d[dd$Provincia == "Granada"])
 FortnightDeathsGRX <- first(dd$Fallecidos_14d[dd$Provincia == "Granada"])
 
-
 #Summary for GRX
 dd%>%
   filter(Provincia == "Granada") %>%
   ggplot(aes(x = Fecha)) +
   geom_line(aes(y = Confirmados_7d*(Confirmados_7d > 0)), colour = "blue", size = 1) + 
-  geom_line(aes(y = 10*Fallecidos_7d*(Fallecidos_7d > 0)), colour = "red", size = 1) +
-  scale_y_continuous(sec.axis = sec_axis(~ . / 10, name = "Fallecidos 7 días")) +
+  geom_line(aes(y = 50*Fallecidos_7d*(Fallecidos_7d > 0)), colour = "red", size = 1) +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 50, name = "Fallecidos 7 días")) +
   theme( axis.line.y.right = element_line(color = "red"), 
          axis.ticks.y.right = element_line(color = "red"),
          axis.text.y.right = element_text(color = "red"),
@@ -159,14 +160,16 @@ dd%>%
          axis.ticks.y.left = element_line(color = "blue"),
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=7300,
+           label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=6800, 
-           label= paste("Casos 7 días:", WeekCasesGRX)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=6300, 
-           label= paste("Fallecidos 7 días:", WeekDeathsGRX)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=5600,
-           label= paste("Total casos:", TotCasesGRX)) +
+           label= paste("Casos 7 días:", WeekCasesGRX), color = "blue") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=6300,
+           label= paste("Total casos:", TotCasesGRX), color = "blue") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=5600, 
+           label= paste("Fallecidos 7 días:", WeekDeathsGRX), color = "red") +
   annotate("text", x=as.POSIXct("2020-04-15"), y=5100,
-           label= paste("Total fallecidos:", TotDeathsGRX)) +
+           label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 7 días")
 
 # Y a 14 días
@@ -184,6 +187,8 @@ dd%>%
          axis.ticks.y.left = element_line(color = "blue"),
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=13500,
+           label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=12000, 
            label= paste("Casos 14 días:", FortnightCasesGRX)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=11000, 
@@ -209,6 +214,8 @@ dd%>%
          axis.ticks.y.left = element_line(color = "blue"),
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=13500,
+           label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=12000, 
            label= paste("Casos 14 días:", FortnightCasesGRX)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=11000, 
@@ -234,6 +241,8 @@ dd%>%
          axis.ticks.y.left = element_line(color = "darkgreen"),
          axis.text.y.left = element_text(color = "darkgreen"),
          axis.title.y.left = element_text(color = "darkgreen")) +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=220,
+           label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=200, 
            label= paste("UCI 14 días:", FortnightUCIGRX)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=190, 
