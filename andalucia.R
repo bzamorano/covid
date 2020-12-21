@@ -20,7 +20,6 @@ confirmados <- data$Valor[data$Medida=="Total confirmados "]
 uci         <- data$Valor[data$Medida=="Total UCI"]
 fallecidos  <- data$Valor[data$Medida=="Fallecidos"]
 
-
 nrows <- length(fechas)
 
 dd <- data[1:nrows,0]
