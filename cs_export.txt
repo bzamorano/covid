@@ -1,5 +1,4 @@
 Fecha;Territorio;Medida;Valor;
-<<<<<<< HEAD
 08/01/2021;Andalucía;Confirmados PDIA;273990;
 08/01/2021;Andalucía;Aumento;1829;
 08/01/2021;Andalucía;Confirmados PDIA 14 días;17120;
@@ -81,8 +80,6 @@ Fecha;Territorio;Medida;Valor;
 08/01/2021;Sevilla;Total UCI;548;
 08/01/2021;Sevilla;Fallecidos;1179;
 08/01/2021;Sevilla;Curados;55068;
-=======
->>>>>>> 51777f38971d6084ad0c75c56789d682cdcd336e
 07/01/2021;Andalucía;Confirmados PDIA;272161;
 07/01/2021;Andalucía;Aumento;2687;
 07/01/2021;Andalucía;Confirmados PDIA 14 días;16222;
@@ -66234,7 +66231,6 @@ Fecha;Territorio;Medida;Valor;
                
                
           
-<<<<<<< HEAD
           
                
                     
@@ -66364,6 +66360,4 @@ Fecha;Territorio;Medida;Valor;
                
                
           
-=======
->>>>>>> 51777f38971d6084ad0c75c56789d682cdcd336e
      
