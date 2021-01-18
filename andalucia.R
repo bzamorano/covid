@@ -67,6 +67,10 @@ dd['UCI_14d']         <- fortnightUCI
 dd['Fallecidos_7d']   <- weekdeath
 dd['Fallecidos_14d']  <- fortnightdeath
 
+# Población (INE)
+pop <- read.csv2("./pop_andalucia.csv", sep=";", header = TRUE)
+dd<-merge(x=dd, y=pop, by.x = "Provincia",  by.y = "Provincia", all.x=TRUE)
+
 rm(weeknew, fortnightnew, weekUCI, fortnightUCI, weekdeath, fortnightdeath)
 
 TotCases <- max(data$Valor[data$Medida == "Total confirmados "], na.rm = TRUE)
@@ -115,6 +119,13 @@ dd%>%
   ggplot(aes(x=Fecha, y=Confirmados_14d, colour=Provincia)) +
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Confirmados - 14 días")
+
+# Incidencia acumulada
+dd[dd$Fecha > "2020-10-01",]%>%
+  filter(Provincia != "Andalucía") %>%
+  ggplot(aes(x=Fecha, y=Confirmados_14d * 1e5/Poblacion, colour=Provincia)) +
+  geom_line(size = 1.25) +
+  labs(x = "Fecha", y = "Incidencia acumulada")
 
 # UCI 14 dias
 dd%>%
