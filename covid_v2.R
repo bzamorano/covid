@@ -31,8 +31,6 @@ data[data=="United_Kingdom"]<-"UK"
 data[data=="Democratic_Republic_of_the_Congo"]<-"DR_Congo"
 data[data=="Bosnia_and_Herzegovina"]<-"Bosnia_Herz"
 
-spain <- data[data$countriesAndTerritories == "Spain",]
-
 # # Population (from Wikipedia)
 # pop <- read.csv("./population.csv")
 # data<-merge(x=data, y=pop, by.x = "countriesAndTerritories",  by.y = "Country",all.x=TRUE)
@@ -65,26 +63,31 @@ for (country in countries) {
 data['totCases'] <- tot_sum
 data['totDeaths'] <- death_sum
 
+spain <- data[data$countriesAndTerritories == "Spain",]
+
 rm(dt, countries, country, death_sum, i, irows, n_rows, tf, tot_sum, nrows)
 
 dd <- data%>%
   group_by(dateRep) %>%
-  summarise(Cases = sum(totCases)) %>%
-  arrange(desc(Cases)) %>%
-  slice(1:1)
+  summarise(Cases = sum(totCases), Deaths = sum(totDeaths))
 
-TotWorldCases <- sum(dd$Cases)
+TotWorldCases <- max(dd$Cases)
+TotWorldDeaths <- max(dd$Deaths)
 LastDay <- max(dd$dateRep)
 rm(dd)
 
+#Global summary
+
 data%>%
   group_by(dateRep) %>%
-  summarise(Cases = sum(totCases)) %>%
-  ggplot(aes(x=dateRep, y=Cases)) +
-  geom_line(colour = "red", size = 1.25) +
+  summarise(Cases = sum(totCases), Deaths = sum(totDeaths)) %>%
+  ggplot(aes(x=dateRep)) +
+  geom_line(aes(y=Cases), colour = "blue", size = 1.25) +
+  geom_line(aes(y=Deaths), colour = "red", size = 1.25) +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Date", y = "Total cases") +
-  annotate("text", x=LastDay-86400*60, y=1500, label= paste("Total cases:", TotWorldCases))
+  annotate("text", x=LastDay-86400*60, y=15000, label= paste("Total cases:", TotWorldCases)) +
+  annotate("text", x=LastDay-86400*60, y=3000, label= paste("Total deaths:", TotWorldDeaths))
 
 # These two charts show that higher mortality rates are most likely linked to the
 # ability to count them efficiently than to any wrongdoing. Hence the overrepresentation
@@ -134,8 +137,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Cases_rate), weight = Cases_rate)) +
   geom_bar(fill = "orange", colour = "orange") +
   coord_flip() +
-  annotate("text", x=14.8, y=53, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=53, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=72, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=72, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Cases per thousand inhabitants")
 
 # Top death rate
@@ -151,8 +154,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "darkred", colour = "darkred") +
   coord_flip() +
-  annotate("text", x=14.8, y=1400, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=1400, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=1500, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=1500, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Bottom death rate
@@ -317,11 +320,10 @@ small[(small$dateRep > "2020-02-29"), ]%>%
   scale_y_log10(labels = comma_format(big.mark = " ")) +
   labs(x = "Date", y = "Weekly cases", colour = "Country")
 
-small[(small$dateRep > "2020-02-29"), ]%>%
-  filter(countriesAndTerritories == "Spain") %>%
-  ggplot(aes(x=dateRep, y = cases_weekly*(cases_weekly>0), colour = countriesAndTerritories)) +
-  geom_line(size=1) +
-  labs(x = "Date", y = "Weekly cases", colour = "Country")
+spain[(spain$dateRep > "2020-02-29"), ]%>%
+  ggplot(aes(x=dateRep, y = cases_weekly*(cases_weekly>0))) +
+  geom_line(size=1, colour = "red") +
+  labs(x = "Date", y = "Weekly cases", title = "Spain")
 
 small[(small$dateRep > "2020-02-29"), ]%>%
   ggplot(aes(x=dateRep, y=totCases, colour = countriesAndTerritories)) +
@@ -334,24 +336,21 @@ small[(small$dateRep > "2020-02-29"), ]%>%
   geom_line(size=1) +
   labs(x = "Date", y = "Weekly deaths", colour = "Country")
 
-small[(small$dateRep > "2020-02-29"), ]%>%
-  filter(countriesAndTerritories == "Spain") %>%
-  ggplot(aes(x=dateRep, y = deaths_weekly*(deaths_weekly>0), colour = countriesAndTerritories)) +
-  geom_line(size=1) +
-  labs(x = "Date", y = "Weekly deaths", colour = "Country")
+spain[(spain$dateRep > "2020-02-29"), ]%>%
+  ggplot(aes(x=dateRep, y = deaths_weekly*(deaths_weekly>0))) +
+  geom_line(size=1, colour = "red") +
+  labs(x = "Date", y = "Weekly deaths", title = "Spain")
 
 ### Summary for Spain since summer ###
 # First without scaling
-small[(small$dateRep > "2020-02-29"), ]%>%
-  filter(countriesAndTerritories == "Spain") %>%
+spain[(spain$dateRep > "2020-02-29"), ]%>%
   ggplot(aes(x = dateRep)) +
   geom_line(aes(y = cases_weekly*(cases_weekly > 0)), colour = "blue", size = 1) + 
   geom_line(aes(y = deaths_weekly*(deaths_weekly > 0)), colour = "red", size = 1) +
   labs(x = "Date", y = "Fortnightly cases and deaths")
 
 # And now scaling (focusing on second surge)
-small[(small$dateRep > "2020-07-01"), ]%>%
-  filter(countriesAndTerritories == "Spain") %>%
+spain[(spain$dateRep > "2020-07-01"), ]%>%
   ggplot(aes(x = dateRep)) +
   geom_line(aes(y = cases_weekly*(cases_weekly > 0)), colour = "blue", size = 1) + 
   geom_line(aes(y = 10*deaths_weekly*(deaths_weekly > 0)), colour = "red", size = 1) +
@@ -369,8 +368,7 @@ small[(small$dateRep > "2020-07-01"), ]%>%
 ### Animation! ###
 library(gganimate)
 
-p <- small[(small$dateRep > "2020-02-29"), ]%>%
-  filter(countriesAndTerritories == "Spain") %>%
+p <- spain[(spain$dateRep > "2020-02-29"), ]%>%
   ggplot(aes(x = dateRep)) +
   geom_line(aes(y = cases_weekly*(cases_weekly > 0)), colour = "blue", size = 1) + 
   geom_line(aes(y = 10*deaths_weekly*(deaths_weekly > 0)), colour = "red", size = 1) +

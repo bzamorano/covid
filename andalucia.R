@@ -159,6 +159,7 @@ dd%>%
          axis.ticks.y.left = element_line(color = "blue"),
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
+  geom_vline(xintercept = as.POSIXct("2020-12-24"), col = "green") +
   annotate("text", x=as.POSIXct("2020-04-15"), y=7300,
            label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=6800, 
@@ -176,8 +177,8 @@ dd%>%
   filter(Provincia == "Granada") %>%
   ggplot(aes(x = Fecha)) +
   geom_line(aes(y = Confirmados_14d*(Confirmados_14d > 0)), colour = "blue", size = 1) + 
-  geom_line(aes(y = 10*Fallecidos_14d*(Fallecidos_14d > 0)), colour = "red", size = 1) +
-  scale_y_continuous(sec.axis = sec_axis(~ . / 10, name = "Fallecidos 14 días")) +
+  geom_line(aes(y = 50*Fallecidos_14d*(Fallecidos_14d > 0)), colour = "red", size = 1) +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 50, name = "Fallecidos 14 días")) +
   theme( axis.line.y.right = element_line(color = "red"), 
          axis.ticks.y.right = element_line(color = "red"),
          axis.text.y.right = element_text(color = "red"),
