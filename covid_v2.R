@@ -137,8 +137,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Cases_rate), weight = Cases_rate)) +
   geom_bar(fill = "orange", colour = "orange") +
   coord_flip() +
-  annotate("text", x=14.8, y=72, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=72, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=75, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=75, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Cases per thousand inhabitants")
 
 # Top death rate
