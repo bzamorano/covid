@@ -18,6 +18,7 @@ fechas      <- data$Fecha[data$Medida=="Total confirmados "]
 provincia   <- data$Territorio[data$Medida=="Total confirmados "]
 confirmados <- data$Valor[data$Medida=="Total confirmados "]
 uci         <- data$Valor[data$Medida=="Total UCI"]
+hospital    <- data$Valor[data$Medida=="Hospitalizados"]
 fallecidos  <- data$Valor[data$Medida=="Fallecidos"]
 
 nrows <- length(fechas)
@@ -28,7 +29,8 @@ dd['Provincia']   <- provincia
 dd['Confirmados'] <- confirmados
 dd['UCI']         <- uci
 dd['Fallecidos']  <- fallecidos
-rm(fechas, provincia, confirmados, uci, fallecidos)
+dd['Hospitalizados'] <- hospital 
+rm(fechas, provincia, confirmados, uci, fallecidos, hospital)
 
 provincias <- unique(dd$Provincia)
 
@@ -38,6 +40,8 @@ weekUCI        <- integer(nrows)
 fortnightUCI   <- integer(nrows)
 weekdeath      <- integer(nrows)
 fortnightdeath <- integer(nrows)
+weekhosp       <- integer(nrows)
+fortnighthosp  <- integer(nrows)
 
 for (prov in provincias) {
   irows <- (1:nrows)[dd$Provincia == prov]
@@ -55,6 +59,8 @@ for (prov in provincias) {
     fortnightUCI[irows[i]] <- dt$UCI[i] - dt$UCI[min_index2]
     weekdeath[irows[i]] <- dt$Fallecidos[i] - dt$Fallecidos[min_index]
     fortnightdeath[irows[i]] <- dt$Fallecidos[i] - dt$Fallecidos[min_index2]
+    weekhosp[irows[i]] <- dt$Hospitalizados[i] - dt$Hospitalizados[min_index]
+    fortnighthosp[irows[i]] <- dt$Hospitalizados[i] - dt$Hospitalizados[min_index2]
   }
 }
 
@@ -66,12 +72,15 @@ dd['UCI_7d']          <- weekUCI
 dd['UCI_14d']         <- fortnightUCI
 dd['Fallecidos_7d']   <- weekdeath
 dd['Fallecidos_14d']  <- fortnightdeath
+dd['Hospital_7d']     <- weekhosp
+dd['Hospital_14d']    <- fortnighthosp
 
 # Población (INE)
 pop <- read.csv2("~/Work/covid/pop_andalucia.csv", sep=";", header = TRUE)
 dd<-merge(x=dd, y=pop, by.x = "Provincia",  by.y = "Provincia", all.x=TRUE)
 
-rm(weeknew, fortnightnew, weekUCI, fortnightUCI, weekdeath, fortnightdeath)
+rm(weeknew, fortnightnew, weekUCI, fortnightUCI, 
+   weekdeath, fortnightdeath, weekhosp, fortnighthosp)
 
 TotCases <- max(data$Valor[data$Medida == "Total confirmados "], na.rm = TRUE)
 TotCasesGRX <- max(data$Valor[data$Medida == "Total confirmados "
@@ -82,14 +91,19 @@ TotUCIGRX <- max(data$Valor[data$Medida == "Total UCI"
 TotDeaths <- max(data$Valor[data$Medida == "Fallecidos"], na.rm = TRUE)
 TotDeathsGRX <- max(data$Valor[data$Medida == "Fallecidos"
                                & data$Territorio == "Granada"], na.rm = TRUE)
+TotHosp <- max(data$Valor[data$Medida == "Hospitalizados"], na.rm = TRUE)
+TotHospGRX <- max(data$Valor[data$Medida == "Hospitalizados"
+                               & data$Territorio == "Granada"], na.rm = TRUE)
 LastDay <- max(data$Fecha, na.rm = TRUE)
 
 WeekCasesGRX  <- first(dd$Confirmados_7d[dd$Provincia == "Granada" & dd$Fecha == LastDay])
 WeekUCIGRX  <- first(dd$UCI_7d[dd$Provincia == "Granada" & dd$Fecha == LastDay])
 WeekDeathsGRX <- first(dd$Fallecidos_7d[dd$Provincia == "Granada" & dd$Fecha == LastDay])
+WeekHospGRX <- first(dd$Hospital_7d[dd$Provincia == "Granada" & dd$Fecha == LastDay])
 FortnightCasesGRX  <- first(dd$Confirmados_14d[dd$Provincia == "Granada" & dd$Fecha == LastDay])
 FortnightUCIGRX <- first(dd$UCI_14d[dd$Provincia == "Granada" & dd$Fecha == LastDay])
 FortnightDeathsGRX <- first(dd$Fallecidos_14d[dd$Provincia == "Granada" & dd$Fecha == LastDay])
+FortnightHospGRX <- first(dd$Hospital_14d[dd$Provincia == "Granada" & dd$Fecha == LastDay])
 IncTot <- first(dd$Confirmados_14d[dd$Provincia == "Andalucía" & dd$Fecha == LastDay]) *1.e5 /
           pop$Poblacion[pop$Provincia == "Andalucía"]
 IncGRX <- first(dd$Confirmados_14d[dd$Provincia == "Granada" & dd$Fecha == LastDay]) *1.e5 /
@@ -97,43 +111,54 @@ IncGRX <- first(dd$Confirmados_14d[dd$Provincia == "Granada" & dd$Fecha == LastD
 
 # Casos totales
 data%>%
-  filter(Medida == "Total confirmados " ) %>%
+  filter(Territorio != "Andalucía" & Medida == "Total confirmados " ) %>%
   ggplot(aes(x=Fecha, y=Valor, colour=Territorio)) +
   geom_line(size = 1.25) +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Fecha", y = "Casos totales") +
-  annotate("text", x=LastDay-86400*45, y=300, label= LastDay) +
-  annotate("text", x=LastDay-86400*45, y=150, label= paste("Casos totales:", TotCases)) +
-  annotate("text", x=LastDay-86400*45, y=75, label= paste("Granada:", TotCasesGRX))
+  labs(x = "Fecha", y = "Casos totales", col = "Provincia") +
+  annotate("text", x=LastDay-86400*60, y=300, label= LastDay) +
+  annotate("text", x=LastDay-86400*60, y=150, label= paste("Casos totales:", TotCases)) +
+  annotate("text", x=LastDay-86400*60, y=75, label= paste("Granada:", TotCasesGRX))
 
 # Fallecidos totales
 data%>%
-  filter(Medida == "Fallecidos" ) %>%
+  filter(Territorio != "Andalucía" & Medida == "Fallecidos" ) %>%
   ggplot(aes(x=Fecha, y=Valor, colour=Territorio)) +
   geom_line(size = 1.25) +
   scale_y_log10(labels = comma_format(big.mark = " ")) +
-  labs(x = "Fecha", y = "Fallecidos totales") +
-  annotate("text", x=LastDay-86400*45, y=27, label= LastDay) +
-  annotate("text", x=LastDay-86400*45, y=18, label= paste("Fallecidos totales:", TotDeaths)) +
-  annotate("text", x=LastDay-86400*45, y=12, label= paste("Granada:", TotDeathsGRX))
+  labs(x = "Fecha", y = "Fallecidos totales", col = "Provincia") +
+  annotate("text", x=LastDay-86400*60, y=27, label= LastDay) +
+  annotate("text", x=LastDay-86400*60, y=18, label= paste("Fallecidos totales:", TotDeaths)) +
+  annotate("text", x=LastDay-86400*60, y=12, label= paste("Granada:", TotDeathsGRX))
+
+# Hospitalizados totales
+data%>%
+  filter(Territorio != "Andalucía" & Medida == "Hospitalizados" ) %>%
+  ggplot(aes(x=Fecha, y=Valor, colour=Territorio)) +
+  geom_line(size = 1.25) +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
+  labs(x = "Fecha", y = "Hospitalizados totales", col = "Provincia") +
+  annotate("text", x=LastDay-86400*90, y=50, label= LastDay) +
+  annotate("text", x=LastDay-86400*90, y=30, label= paste("Hospitalizados totales:", TotHosp)) +
+  annotate("text", x=LastDay-86400*90, y=18, label= paste("Granada:", TotHospGRX))
 
 # Confirmados 7 dias
 dd%>%
-  filter(Provincia != "Andalucía") %>%
+  filter(Provincia != "Andalucía" & Fecha > "2020-10-01") %>%
   ggplot(aes(x=Fecha, y=Confirmados_7d, colour=Provincia)) +
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Confirmados - 7 días")
 
 # Confirmados 14 dias
 dd%>%
-  filter(Provincia != "Andalucía") %>%
+  filter(Provincia != "Andalucía" & Fecha > "2020-10-01") %>%
   ggplot(aes(x=Fecha, y=Confirmados_14d, colour=Provincia)) +
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Confirmados - 14 días")
 
 # Incidencia acumulada
-dd[dd$Fecha > "2020-10-01",]%>%
-  filter(Provincia != "Andalucía") %>%
+dd%>%
+  filter(Provincia != "Andalucía" & Fecha > "2020-10-01") %>%
   ggplot(aes(x=Fecha, y=Confirmados_14d * 1e5/Poblacion, colour=Provincia)) +
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Incidencia acumulada") +
@@ -143,24 +168,24 @@ dd[dd$Fecha > "2020-10-01",]%>%
 
 # UCI 14 dias
 dd%>%
-  filter(Provincia != "Andalucía") %>%
+  filter(Provincia != "Andalucía" & Fecha > "2020-10-01") %>%
   ggplot(aes(x=Fecha, y=UCI_14d, colour=Provincia)) +
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "UCI - 14 días")
 
-# Fallecidos 7 dias
-dd%>%
-  filter(Provincia != "Andalucía") %>%
-  ggplot(aes(x=Fecha, y=Fallecidos_7d, colour=Provincia)) +
-  geom_line(size = 1.25) +
-  labs(x = "Fecha", y = "Fallecidos - 7 días")
-
 # Fallecidos 14 dias
 dd%>%
-  filter(Provincia != "Andalucía") %>%
+  filter(Provincia != "Andalucía" & Fecha > "2020-10-01") %>%
   ggplot(aes(x=Fecha, y=Fallecidos_14d, colour=Provincia)) +
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Fallecidos - 14 días")
+
+# Hospitalizados 14 dias
+dd%>%
+  filter(Provincia != "Andalucía" & Fecha > "2020-10-01") %>%
+  ggplot(aes(x=Fecha, y=Hospital_14d, colour=Provincia)) +
+  geom_line(size = 1.25) +
+  labs(x = "Fecha", y = "Hospitalizados - 14 días")
 
 #Summary for GRX
 dd%>%
@@ -218,32 +243,32 @@ dd%>%
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 14 días")
 
-# Casos y UCI
+# Hospitalizados y UCI
 dd%>%
   filter(Provincia == "Granada") %>%
   ggplot(aes(x = Fecha)) +
-  geom_line(aes(y = Confirmados_14d*(Confirmados_14d > 0)), colour = "blue", size = 1) + 
-  geom_line(aes(y = 100*UCI_14d*(UCI_14d > 0)), colour = "darkgreen", size = 1) +
-  scale_y_continuous(sec.axis = sec_axis(~ . / 100, name = "UCI 14 días")) +
+  geom_line(aes(y = Hospital_14d*(Hospital_14d > 0)), colour = "darkmagenta", size = 1) + 
+  geom_line(aes(y = 5*UCI_14d*(UCI_14d > 0)), colour = "darkgreen", size = 1) +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 5, name = "UCI 14 días")) +
   theme( axis.line.y.right = element_line(color = "darkgreen"), 
          axis.ticks.y.right = element_line(color = "darkgreen"),
          axis.text.y.right = element_text(color = "darkgreen"),
          axis.title.y.right = element_text(color = "darkgreen")) +
-  theme( axis.line.y.left = element_line(color = "blue"), 
-         axis.ticks.y.left = element_line(color = "blue"),
-         axis.text.y.left = element_text(color = "blue"),
-         axis.title.y.left = element_text(color = "blue")) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=13500,
+  theme( axis.line.y.left = element_line(color = "darkmagenta"), 
+         axis.ticks.y.left = element_line(color = "darkmagenta"),
+         axis.text.y.left = element_text(color = "darkmagenta"),
+         axis.title.y.left = element_text(color = "darkmagenta")) +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=850,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=12000, 
-           label= paste("Casos 14 días:", FortnightCasesGRX)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=11000, 
-           label= paste("UCI 14 días:", FortnightUCIGRX)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=9500,
-           label= paste("Total casos:", TotCasesGRX)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=8500,
-           label= paste("Total UCI:", TotUCIGRX)) +
-  labs(x = "Fecha", y = "Confirmados 14 días")
+  annotate("text", x=as.POSIXct("2020-04-15"), y=800, 
+           label= paste("Hospitalizados 14 días:", FortnightHospGRX), color = "darkmagenta") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=760,
+           label= paste("Total hospital:", TotHospGRX), color = "darkmagenta") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=700, 
+           label= paste("UCI 14 días:", FortnightUCIGRX), color = "darkgreen") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=660,
+           label= paste("Total UCI:", TotUCIGRX), color = "darkgreen") +
+  labs(x = "Fecha", y = "Hospitalizados 14 días")
 
 # A 14 días UCI y fallecidos
 dd%>%
@@ -263,11 +288,11 @@ dd%>%
   annotate("text", x=as.POSIXct("2020-04-15"), y=220,
            label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=200, 
-           label= paste("UCI 14 días:", FortnightUCIGRX)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=190, 
-           label= paste("Fallecidos 14 días:", FortnightDeathsGRX)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=170,
-           label= paste("Total UCI:", TotUCIGRX)) +
+           label= paste("UCI 14 días:", FortnightUCIGRX), color = "darkgreen") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=190,
+           label= paste("Total UCI:", TotUCIGRX), color = "darkgreen") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=170, 
+           label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
   annotate("text", x=as.POSIXct("2020-04-15"), y=160,
-           label= paste("Total fallecidos:", TotDeathsGRX)) +
+           label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "UCI 14 días")
