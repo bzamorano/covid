@@ -137,8 +137,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Cases_rate), weight = Cases_rate)) +
   geom_bar(fill = "orange", colour = "orange") +
   coord_flip() +
-  annotate("text", x=14.8, y=75, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=75, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=80, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=80, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Cases per thousand inhabitants")
 
 # Top death rate
@@ -154,8 +154,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "darkred", colour = "darkred") +
   coord_flip() +
-  annotate("text", x=14.8, y=1500, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=1500, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=1570, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=1570, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Bottom death rate
@@ -171,8 +171,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "blue", colour = "darkblue") +
   coord_flip() +
-  annotate("text", x=14.8, y=11, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=11, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=12, label= "Countries with pop. > 5000") +
+  annotate("text", x=14, y=12, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Continent timeline
@@ -281,6 +281,19 @@ data_continents %>%
   theme(axis.text.x=element_blank()) +
   geom_text(aes(label = my_percent(Deaths/sum(Deaths))), position = position_stack(vjust = 0.5), check_overlap = TRUE) +
   labs(x = "", y = paste("Total covid-19 deaths:", TotalWorldDeaths) )
+
+# Mortality rate by contintents
+data_continents %>%
+  group_by(Continent) %>%
+  summarise(Deaths = sum(Deaths, na.rm = TRUE),
+            Population = sum(Population, na.rm = TRUE),
+            Death_rate = Deaths * 1.e6 / Population ) %>%
+  filter(Population > 0) %>%
+  arrange(desc(Death_rate)) %>%
+  ggplot(aes(x = reorder(Continent, -Death_rate), weight = Death_rate )) +
+  geom_bar(fill = "darkred", colour = "darkred") +
+  coord_flip() +
+  labs(x = "Continent", y = "Deaths per million inhabitants")
 
 # By continent (log-scale)
 data_continents %>%
@@ -400,6 +413,15 @@ small[(small$dateRep > "2020-02-29"), ]%>%
 
 # Evolution of the pandemic
 small[(small$totCases > 100), ]%>%
+  ggplot(aes(x=totCases, y=cases_weekly, colour = countriesAndTerritories)) +
+  geom_line(size=1) +
+  geom_line((aes(x=totCases, y=totCases)), colour = "grey" ) +
+  scale_x_log10(labels = comma_format(big.mark = " ")) +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
+  labs(x = "Total cases", y = "Weekly new cases", colour = "Country")
+
+# Evolution of the pandemic in Spain only
+spain[(spain$totCases > 100), ]%>%
   ggplot(aes(x=totCases, y=cases_weekly, colour = countriesAndTerritories)) +
   geom_line(size=1) +
   geom_line((aes(x=totCases, y=totCases)), colour = "grey" ) +
