@@ -127,7 +127,7 @@ data %>%
 # Top cases rate
 data %>%
   group_by(countriesAndTerritories) %>%
-  filter(max(popData2019) > 5000) %>%
+  filter(max(popData2019) > 50000) %>%
   filter(max(totDeaths) > 100) %>%
   summarise(Cases = max(totCases),
             Population = max(popData2019),
@@ -137,14 +137,14 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Cases_rate), weight = Cases_rate)) +
   geom_bar(fill = "orange", colour = "orange") +
   coord_flip() +
-  annotate("text", x=14.8, y=80, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=80, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=105, label= "Countries with pop. > 50 000") +
+  annotate("text", x=14, y=105, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Cases per thousand inhabitants")
 
 # Top death rate
 data %>%
   group_by(countriesAndTerritories) %>%
-  filter(max(popData2019) > 5000) %>%
+  filter(max(popData2019) > 50000) %>%
   filter(max(totDeaths) > 100) %>%
   summarise(Deaths = max(totDeaths),
             Population = max(popData2019),
@@ -154,14 +154,14 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "darkred", colour = "darkred") +
   coord_flip() +
-  annotate("text", x=14.8, y=1570, label= "Countries with pop. > 5000") +
+  annotate("text", x=14.8, y=1570, label= "Countries with pop. > 50 000") +
   annotate("text", x=14, y=1570, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Bottom death rate
 data %>%
   group_by(countriesAndTerritories) %>%
-  filter(max(popData2019) > 5000) %>%
+  filter(max(popData2019) > 50000) %>%
   filter(max(totDeaths) > 100) %>%
   summarise(Deaths = max(totDeaths),
             Population = max(popData2019),
@@ -171,8 +171,8 @@ data %>%
   ggplot(aes(x = reorder(countriesAndTerritories, -Death_rate), weight = Death_rate)) +
   geom_bar(fill = "blue", colour = "darkblue") +
   coord_flip() +
-  annotate("text", x=14.8, y=12, label= "Countries with pop. > 5000") +
-  annotate("text", x=14, y=12, label= "and at least 100 deaths") +
+  annotate("text", x=14.8, y=13, label= "Countries with pop. > 50 000") +
+  annotate("text", x=14, y=13, label= "and at least 100 deaths") +
   labs(x = "Country", y = "Deaths per million inhabitants")
 
 # Continent timeline
@@ -378,14 +378,46 @@ spain[(spain$dateRep > "2020-07-01"), ]%>%
          axis.title.y.left = element_text(color = "blue")) +
   labs(x = "Date", y = "Weekly cases")
 
+# Summary for Spain
+TotSpainCases   <- max(spain$totCases)
+TotSpainDeaths  <- max(spain$totDeaths)
+WeekSpainCases  <- first(spain$cases_weekly)
+WeekSpainDeaths <- first(spain$deaths_weekly)
+LastDay         <- max(spain$dateRep)
+
+spain[(spain$dateRep > "2020-02-29"), ]%>%
+  ggplot(aes(x = dateRep)) +
+  geom_line(aes(y = cases_weekly*(cases_weekly > 0)), colour = "blue", size = 1) + 
+  geom_line(aes(y = 50*deaths_weekly*(deaths_weekly > 0)), colour = "red", size = 1) +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 50, name = "Weekly deaths")) +
+  theme( axis.line.y.right = element_line(color = "red"), 
+         axis.ticks.y.right = element_line(color = "red"),
+         axis.text.y.right = element_text(color = "red"),
+         axis.title.y.right = element_text(color = "red")) +
+  theme( axis.line.y.left = element_line(color = "blue"), 
+         axis.ticks.y.left = element_line(color = "blue"),
+         axis.text.y.left = element_text(color = "blue"),
+         axis.title.y.left = element_text(color = "blue")) +
+  annotate("text", x=as.POSIXct("2020-07-15"), y=290000,
+           label = paste("Spain", LastDay)) +
+  annotate("text", x=as.POSIXct("2020-07-15"), y=270000, 
+           label= paste("Weekly cases:", WeekSpainCases), color = "blue") +
+  annotate("text", x=as.POSIXct("2020-07-15"), y=255000,
+           label= paste("Total cases:", TotSpainCases), color = "blue") +
+  annotate("text", x=as.POSIXct("2020-07-15"), y=225000, 
+           label= paste("Weekly deaths:", WeekSpainDeaths), color = "red") +
+  annotate("text", x=as.POSIXct("2020-07-15"), y=210000,
+           label= paste("Total deaths:", TotSpainDeaths), color = "red") +
+  labs(x = "Date", y = "Weekly cases")
+
 ### Animation! ###
 library(gganimate)
 
 p <- spain[(spain$dateRep > "2020-02-29"), ]%>%
   ggplot(aes(x = dateRep)) +
   geom_line(aes(y = cases_weekly*(cases_weekly > 0)), colour = "blue", size = 1) + 
-  geom_line(aes(y = 10*deaths_weekly*(deaths_weekly > 0)), colour = "red", size = 1) +
-  scale_y_continuous(sec.axis = sec_axis(~ . / 10, name = "Weekly deaths")) +
+  geom_line(aes(y = 50*deaths_weekly*(deaths_weekly > 0)), colour = "red", size = 1) +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 50, name = "Weekly deaths")) +
   theme( axis.line.y.right = element_line(color = "red"), 
          axis.ticks.y.right = element_line(color = "red"),
          axis.text.y.right = element_text(color = "red"),
@@ -396,7 +428,6 @@ p <- spain[(spain$dateRep > "2020-02-29"), ]%>%
          axis.title.y.left = element_text(color = "blue")) +
   labs(x = "Date", y = "Weekly cases")
 
-p
 p + transition_reveal(dateRep)
 anim_save(filename = "spain_evolution.gif")
 
