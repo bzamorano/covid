@@ -1,0 +1,226 @@
+---
+title: "Covid World Report"
+author: "Bruno Zamorano"
+date: "11/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) 
+# Libraries
+library(utils)
+library(httr)
+library(tidyverse)
+library(scales)
+
+# Style
+theme_set(theme_minimal())
+ggplot <- function(...) ggplot2::ggplot(...) + scale_color_brewer(palette="Set1")
+blank_theme <- theme_minimal()+
+  theme(
+    panel.border = element_blank(),
+    panel.grid=element_blank(),
+    axis.ticks = element_blank(),
+    plot.title=element_text(size=14, face="bold")
+  )
+my_percent <- label_percent( accuracy = 1)
+
+# Download the data
+setwd("~/Work/covid")
+
+GET("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv", 
+    authenticate(":", ":", type="ntlm"),
+    write_disk(tf <- "./covid_data.csv", overwrite = TRUE))
+
+data <- read.csv2(tf, sep=",", header = TRUE)
+
+# Replace some names to make plots nicer
+data[data=="United_States_of_America"]<-"USA"
+data[data=="United_Kingdom"]<-"UK"
+data[data=="Democratic_Republic_of_the_Congo"]<-"DR_Congo"
+data[data=="Bosnia_and_Herzegovina"]<-"Bosnia_Herz"
+
+# # Population (from Wikipedia)
+# pop <- read.csv("./population.csv")
+# data<-merge(x=data, y=pop, by.x = "countriesAndTerritories",  by.y = "Country",all.x=TRUE)
+
+# Fix the data first
+data[[1]] <- as.POSIXct(strptime(data[[1]], "%d/%m/%Y"))
+data <- data %>% arrange(desc(dateRep))
+data[[10]] <- as.numeric(data[[10]])
+colnames(data)[colnames(data) == "notification_rate_per_100000_population_14.days"] <- "incidence"
+
+nrows <- nrow(data)
+
+tot_sum <- integer(nrows)
+death_sum <- integer(nrows)
+
+countries <- unique(data$countriesAndTerritories)
+
+for (country in countries) {
+  irows <- (1:nrows)[data$countriesAndTerritories == country]
+  dt <- data[irows,]
+
+  n_rows <- nrow(dt)
+  
+  for (i in 1:n_rows ) {
+    tot_sum[irows[i]] <- sum(dt$cases_weekly[i:n_rows])
+    death_sum[irows[i]] <- sum(dt$deaths_weekly[i:n_rows])
+  }
+}
+
+data['totCases'] <- tot_sum
+data['totDeaths'] <- death_sum
+
+spain <- data[data$countriesAndTerritories == "Spain",]
+
+rm(dt, countries, country, death_sum, i, irows, n_rows, tf, tot_sum, nrows)
+
+dd <- data%>%
+  group_by(dateRep) %>%
+  summarise(Cases = sum(totCases), Deaths = sum(totDeaths))
+
+TotWorldCases <- max(dd$Cases)
+TotWorldDeaths <- max(dd$Deaths)
+LastDay <- max(dd$dateRep)
+rm(dd)
+```
+
+## Overview up to `r toString(LastDay)`
+
+This is the evolution of cases and fatalities in the World since the beginning of the pandemic. Note the logarithnmic y-axis:
+
+```{r overview, echo=FALSE}
+data%>%
+  group_by(dateRep) %>%
+  summarise(Cases = sum(totCases), Deaths = sum(totDeaths)) %>%
+  ggplot(aes(x=dateRep)) +
+  geom_line(aes(y=Cases), colour = "blue", size = 1.25) +
+  geom_line(aes(y=Deaths), colour = "red", size = 1.25) +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
+  labs(x = "Date", y = "Total cases") +
+  annotate("text", x=LastDay-86400*60, y=15000, label= paste("Total cases:", TotWorldCases), color = "blue")  +
+  annotate("text", x=LastDay-86400*60, y=3000, label= paste("Total deaths:", TotWorldDeaths), color = "red")
+```
+
+The most affected country in total number of cases continues to be the United States.
+
+```{r cases, echo=FALSE}
+data %>%
+  group_by(countriesAndTerritories) %>%
+  summarise(Cases = max(totCases)) %>%
+  arrange(desc(Cases)) %>%
+  slice(1:15) %>%
+  ggplot(aes(x = reorder(countriesAndTerritories, Cases), weight = Cases)) +
+  geom_bar(aes(fill = Cases)) +
+  scale_fill_gradient2( high = "darkblue") +
+  theme_minimal() +
+  guides(fill = FALSE) +
+  coord_flip() +
+  scale_y_continuous(labels = comma_format(big.mark = " ")) +
+  labs(x = "Country or territory", y = "Cases")
+```
+
+When scaled to the total population, small but highly developed territories tend to rank higher.
+
+```{r cases scaled, echo=FALSE}
+data %>%
+  group_by(countriesAndTerritories) %>%
+  summarise(Cases = max(totCases),
+            Population = max(popData2019),
+            Cases_rate = max(totCases) * 1.e3 / max(popData2019) ) %>%
+  arrange(desc(Cases_rate)) %>%
+  slice(1:15) %>%
+  ggplot(aes(x = reorder(countriesAndTerritories, Cases_rate), weight = Cases_rate)) +
+  geom_bar(fill = "orange", colour = "orange") +
+  coord_flip() +
+  labs(x = "Country or territory", y = "Cases per thousand inhabitants")
+```
+
+In terms of total deaths, the USA is also on top:
+
+```{r deaths, echo=FALSE}
+data %>%
+  group_by(countriesAndTerritories) %>%
+  summarise(Deaths = max(totDeaths)) %>%
+  arrange(desc(Deaths)) %>%
+  slice(1:15) %>%
+  ggplot(aes(x = reorder(countriesAndTerritories, Deaths), weight = Deaths)) +
+  geom_bar(aes(fill = Deaths)) +
+  scale_fill_gradient2(high = "red") +
+  theme_minimal() +
+  guides(fill = FALSE) +
+  coord_flip() +
+  scale_y_continuous(labels = comma_format(big.mark = " ")) +
+  labs(x = "Country or territory", y = "Deaths")
+```
+
+But again, when scaled by population, smaller states appear higher on the list:
+
+```{r death rate, echo=FALSE}
+data %>%
+  group_by(countriesAndTerritories) %>%
+#  filter(max(popData2019) > 50000) %>%
+#  filter(max(totDeaths) > 100) %>%
+  summarise(Deaths = max(totDeaths),
+            Population = max(popData2019),
+            Death_rate = max(totDeaths) * 1.e6 / max(popData2019) ) %>%
+  arrange(desc(Death_rate)) %>%
+  slice(1:15) %>%
+  ggplot(aes(x = reorder(countriesAndTerritories, Death_rate), weight = Death_rate)) +
+  geom_bar(fill = "darkred", colour = "darkred") +
+  coord_flip() +
+  labs(x = "Country or territory", y = "Deaths per million inhabitants")
+```
+
+```{r prepare continents, include=FALSE}
+data_continents <- data %>%
+  group_by(continentExp, dateRep) %>%
+  summarise(Deaths = sum(deaths_weekly),
+            Cases = sum(cases_weekly))
+
+nrows <- nrow(data_continents)
+death_sum <- integer(nrows)
+cases_sum <- integer(nrows)
+
+continents <- unique(data_continents$continentExp)
+
+for (continent in continents) {
+  irows <- (1:nrows)[data_continents$continentExp == continent]
+  dt <- data_continents[irows,]
+  
+  n_rows <- nrow(dt)
+  
+  for (i in 1:n_rows ) {
+    death_sum[irows[i]] <- sum(dt$Deaths[1:i])
+    cases_sum[irows[i]] <- sum(dt$Cases[1:i])
+  }
+}
+
+data_continents['totDeath'] <- death_sum
+data_continents['totCases'] <- cases_sum
+
+rm(dt, cases_sum, continent, continents, death_sum, i, irows, n_rows, nrows)
+```
+
+### Continent analysis
+
+The situation appears to remain under control in Oceania and, to a lesser extent, Asia. The trend in Africa is becoming worryingly steep again. The Americas and Europe appear to be entering a stabilising phase.
+
+```{r continents timeline, echo=FALSE}
+data_continents  %>%
+  group_by(dateRep, continentExp) %>%
+  filter(continentExp != "Other") %>%
+  ggplot(aes(x = dateRep, y = totCases, colour = continentExp)) +
+  geom_line(size=1) +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
+  labs(x = "Date", y = "Total cases", colour = "Continent")
+
+data_continents  %>%
+  group_by(dateRep, continentExp) %>%
+  filter(continentExp != "Other") %>%
+  ggplot(aes(x = dateRep, y = totDeath, colour = continentExp)) +
+  geom_line(size=1) +
+  scale_y_log10(labels = comma_format(big.mark = " ")) +
+  labs(x = "Date", y = "Total deaths", colour = "Continent")
+```
