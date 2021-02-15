@@ -162,9 +162,9 @@ dd%>%
   ggplot(aes(x=Fecha, y=Confirmados_14d * 1e5/Poblacion, colour=Provincia)) +
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Incidencia acumulada") +
-  annotate("text", x=LastDay-86400*35, y=1500, label= LastDay) +
-  annotate("text", x=LastDay-86400*35, y=1400, label= paste("Andalucía:", round(IncTot))) +
-  annotate("text", x=LastDay-86400*35, y=1300, label= paste("Granada:", round(IncGRX)))
+  annotate("text", x=LastDay-86400*50, y=1500, label= LastDay) +
+  annotate("text", x=LastDay-86400*50, y=1400, label= paste("Andalucía:", round(IncTot))) +
+  annotate("text", x=LastDay-86400*50, y=1300, label= paste("Granada:", round(IncGRX)))
 
 # UCI 14 dias
 dd%>%
