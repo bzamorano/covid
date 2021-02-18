@@ -296,3 +296,22 @@ dd%>%
   annotate("text", x=as.POSIXct("2020-04-15"), y=160,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "UCI 14 días")
+
+# A 14 días Hospital y fallecidos
+dd%>%
+  filter(Provincia == "Granada") %>%
+  ggplot(aes(x = Fecha)) +
+  geom_line(aes(y = (Hospital_14d+UCI_14d)), colour = "darkviolet", size = 1) + 
+  geom_line(aes(y = Fallecidos_14d*(UCI_14d > 0)), colour = "red", size = 1) +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 1, name = "Fallecidos 14 días")) +
+  theme( axis.line.y.right = element_line(color = "red"), 
+         axis.ticks.y.right = element_line(color = "red"),
+         axis.text.y.right = element_text(color = "red"),
+         axis.title.y.right = element_text(color = "red")) +
+  theme( axis.line.y.left = element_line(color = "darkviolet"), 
+         axis.ticks.y.left = element_line(color = "darkviolet"),
+         axis.text.y.left = element_text(color = "darkviolet"),
+         axis.title.y.left = element_text(color = "darkviolet")) +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=850,
+           label = paste("Granada", LastDay)) +
+  labs(x = "Fecha", y = "Hospital + UCI 14 días")
