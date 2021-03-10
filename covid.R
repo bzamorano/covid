@@ -1,13 +1,12 @@
+# Libraries
 library(utils)
 library(httr)
 library(tidyverse)
-library(tidyr)
 library(scales)
+
+# Style
 theme_set(theme_minimal())
-
 ggplot <- function(...) ggplot2::ggplot(...) + scale_color_brewer(palette="Set1")
-
-# Some style definitions #
 blank_theme <- theme_minimal()+
   theme(
     panel.border = element_blank(),
