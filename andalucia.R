@@ -156,16 +156,6 @@ dd%>%
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Confirmados - 14 días")
 
-# Incidencia acumulada
-dd%>%
-  filter(Provincia != "Andalucía" & Fecha > "2020-10-01") %>%
-  ggplot(aes(x=Fecha, y=Confirmados_14d * 1e5/Poblacion, colour=Provincia)) +
-  geom_line(size = 1.25) +
-  labs(x = "Fecha", y = "Incidencia acumulada") +
-  annotate("text", x=LastDay-86400*75, y=1500, label= LastDay) +
-  annotate("text", x=LastDay-86400*75, y=1400, label= paste("Andalucía:", round(IncTot))) +
-  annotate("text", x=LastDay-86400*75, y=1300, label= paste("Granada:", round(IncGRX)))
-
 # UCI 14 dias
 dd%>%
   filter(Provincia != "Andalucía" & Fecha > "2020-10-01") %>%
@@ -187,9 +177,19 @@ dd%>%
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Hospitalizados - 14 días")
 
+# Incidencia acumulada
+dd%>%
+  filter(Provincia != "Andalucía" & Fecha > "2020-10-01") %>%
+  ggplot(aes(x=Fecha, y=Confirmados_14d * 1e5/Poblacion, colour=Provincia)) +
+  geom_line(size = 1.25) +
+  labs(x = "Fecha", y = "Incidencia acumulada") +
+  annotate("text", x=LastDay-86400*15, y=1500, label= LastDay) +
+  annotate("text", x=LastDay-86400*15, y=1400, label= paste("Andalucía:", round(IncTot))) +
+  annotate("text", x=LastDay-86400*15, y=1300, label= paste("Granada:", round(IncGRX)))
+
 #Summary for GRX
 dd%>%
-  filter(Provincia == "Granada") %>%
+  filter(Provincia == "Granada" & Fecha > "2020-10-01") %>%
   ggplot(aes(x = Fecha)) +
   geom_line(aes(y = Confirmados_7d*(Confirmados_7d > 0)), colour = "blue", size = 1) + 
   geom_line(aes(y = 50*Fallecidos_7d*(Fallecidos_7d > 0)), colour = "red", size = 1) +
@@ -203,21 +203,21 @@ dd%>%
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
   geom_vline(xintercept = as.POSIXct("2020-12-25"), col = "green", size = 1.25) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=7300,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=7900,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=6800, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=7400, 
            label= paste("Casos 7 días:", WeekCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=6300,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=6900,
            label= paste("Total casos:", TotCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=5600, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=6200, 
            label= paste("Fallecidos 7 días:", WeekDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=5100,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=5700,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 7 días")
 
 # Y a 14 días
 dd%>%
-  filter(Provincia == "Granada") %>%
+  filter(Provincia == "Granada" & Fecha > "2020-10-01") %>%
   ggplot(aes(x = Fecha)) +
   geom_line(aes(y = Confirmados_14d*(Confirmados_14d > 0)), colour = "blue", size = 1) + 
   geom_line(aes(y = 50*Fallecidos_14d*(Fallecidos_14d > 0)), colour = "red", size = 1) +
@@ -230,16 +230,16 @@ dd%>%
          axis.ticks.y.left = element_line(color = "blue"),
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
-  geom_vline(xintercept = as.POSIXct("2020-12-25"), col = "green", size = 1.25) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=13500,
+#  geom_vline(xintercept = as.POSIXct("2020-12-25"), col = "green", size = 1.25) +
+  annotate("text", x=as.POSIXct("2021-01-25"), y=15000,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=12000, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=14000, 
            label= paste("Casos 14 días:", FortnightCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=11000,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=13000,
            label= paste("Total casos:", TotCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=9500, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=11500, 
            label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=8500,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=10500,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 14 días")
 
