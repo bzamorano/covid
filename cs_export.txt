@@ -1,6 +1,4 @@
 Fecha;Territorio;Medida;Valor;
-<<<<<<< HEAD
-=======
 22/03/2021;Andalucía;Confirmados PDIA;493431;
 22/03/2021;Andalucía;Aumento;380;
 22/03/2021;Andalucía;Confirmados PDIA 14 días;10372;
@@ -244,7 +242,6 @@ Fecha;Territorio;Medida;Valor;
 20/03/2021;Sevilla;Total UCI;799;
 20/03/2021;Sevilla;Fallecidos;1809;
 20/03/2021;Sevilla;Curados;76724;
->>>>>>> e706ba56c2175ce9e6b385b50210f579d3123ea6
 19/03/2021;Andalucía;Confirmados PDIA;491126;
 19/03/2021;Andalucía;Aumento;958;
 19/03/2021;Andalucía;Confirmados PDIA 14 días;9989;
@@ -81306,8 +81303,6 @@ Fecha;Territorio;Medida;Valor;
                
                
           
-<<<<<<< HEAD
-=======
           
                
                     
@@ -81695,5 +81690,4 @@ Fecha;Territorio;Medida;Valor;
                
                
           
->>>>>>> e706ba56c2175ce9e6b385b50210f579d3123ea6
      
