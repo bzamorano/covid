@@ -16,6 +16,7 @@ countries <- c("Israel", "United Kingdom", "United States", "Germany", "France",
                "Belgium", "Portugal", "Spain", "Italy", "Brazil")
 
 get_date <- function(country){
+
   dd <- data[data$location == country,]
   
 #  dd %>%
@@ -31,7 +32,8 @@ get_date <- function(country){
   
   ddays <- integer(length(x[,1]))
   for (i in 1:length(x[,1]) ) {
-    ddays[i] <- as.integer(x[i,1]-as.POSIXct("2021-01-01"))
+#    ddays[i] <- as.integer(x[i,1]-as.POSIXct("2021-01-01"))
+    ddays[i] <- i
   }
   x["Days"] <- ddays
     
@@ -43,10 +45,16 @@ get_date <- function(country){
     # Este modelo funciona en UK
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=0.65, B=1.2e-9, C=5))
-  }else {
+  }else if(country == "Spain" || country == "Portugal" || country == "Italy"){
     # Modelo para España
-    f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)+C*sin( (Days-D)/E ), data = x, 
-                  start=list(A=0.065, B=-1, C=0.35, D=30, E =7))
+    f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)^E+C*sin( (Days-D)/7 ), data = x, 
+                  start=list(A=0.065, B=-1, C=0.35, D=30, E =1))
+  }else if(country == "Israel"){
+    f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
+                  start=list(A=-10, B=2, C=0.8))
+  }else{
+    f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)+C*sin( (Days-D)/7 ), data = x, 
+                  start=list(A=0.065, B=-1, C=0.35, D=30))
   }
 
   p <- plotPoints(people_fully_vaccinated_per_hundred ~ Days, data = x, 
@@ -60,6 +68,9 @@ get_date <- function(country){
   while (tv < 70) {
     i <- i+1
     tv <- f(i)
+    if (is.na(tv)) {
+      tv <- 0
+    }
   }
   
   print(paste("El 70% se obtiene en", country,"el", as.Date("2021-01-01")+i))
