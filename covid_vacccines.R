@@ -44,7 +44,7 @@ get_date <- function(country){
   }else if(country == "United Kingdom") {
     # Este modelo funciona en UK
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
-                  start=list(A=0.65, B=1.2e-9, C=5))
+                  start=list(A=0.7, B=1.5e-11, C=6))
   }else if(country == "Spain" || country == "Portugal" || country == "Italy"){
     # Modelo para España
     f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)^E+C*sin( (Days-D)/7 ), data = x, 
