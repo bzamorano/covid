@@ -1,10 +1,10 @@
 library(tidyverse)
 library(scales)
 library(mosaic)
+library(lubridate)
 
 #Change default colours
 theme_set(theme_minimal())
-ggplot <- function(...) ggplot2::ggplot(...) + scale_color_brewer(palette="Set1")
 
 data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 
@@ -12,8 +12,8 @@ data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 data$date <- as.POSIXct(strptime(data$date, "%Y-%m-%d"))
 data$total_cases <- as.numeric(data$total_cases)
 
-countries <- c("Israel", "United Kingdom", "United States", "Germany", "France",
-               "Belgium", "Portugal", "Spain", "Italy", "Brazil")
+countries <- c("Israel", "United Kingdom", "United States", "Italy", "Spain",
+               "France", "Germany", "Belgium", "Portugal", "Brazil" )
 
 get_date <- function(country){
 
@@ -73,14 +73,90 @@ get_date <- function(country){
     }
   }
   
-  print(paste("El 70% se obtiene en", country,"el", as.Date("2021-01-01")+i))
-  return(list(p, f))
+  theDay <- as.Date("2021-01-01")+i
+  
+  print(paste("El 70% se obtiene en", country,"el", theDay))
+  return(list(p, f, theDay))
 }
+
+dTime <- matrix(nrow = length(countries), ncol = 3)
 
 for (country in countries) {
   plotAndFun <- get_date(country)
+  
+  FirstNAindex <- min( which(is.na(dTime[,1])) )
+  
+  dTime[FirstNAindex, 1] <- country
+  dTime[FirstNAindex, 2] <- as.character(plotAndFun[[3]])
+  dTime[FirstNAindex, 3] <- length(countries) *1./FirstNAindex
+  
   plot(plotAndFun[[1]])
   plot(plotFun(plotAndFun[[2]], col = "red", add = TRUE))
 }
 
+# Timeline
+dTime <- as.data.frame(dTime)
+names(dTime) <- c("Country", "Date", "Position")
 
+dTime <- dTime[with(dTime, order(Date)), ]
+dTime$Date <- ymd(dTime$Date)
+dTime$Position <- as.numeric(dTime$Position)
+
+month_buffer <- 2
+
+month_date_range <- seq(min(dTime$Date) - months(month_buffer), 
+                        max(dTime$Date) + months(month_buffer), by='month')
+month_format <- format(month_date_range, '%b')
+month_df <- data.frame(month_date_range, month_format)
+
+year_date_range <- seq(min(dTime$Date) - months(month_buffer), 
+                       max(dTime$Date) + months(month_buffer), by='year')
+year_date_range <- as.Date(
+  intersect(
+    ceiling_date(year_date_range, unit="year"),
+    floor_date(year_date_range, unit="year")
+  ),  origin = "1970-01-01"
+)
+year_format <- format(year_date_range, '%Y')
+year_df <- data.frame(year_date_range, year_format)
+
+# Timeline plot
+timeline_plot<-ggplot(dTime, aes(x=Date,y=0))
+timeline_plot<-timeline_plot+geom_segment(data=dTime, aes(y=Position -0.3, 
+                                                          yend=0, xend=Date, col = Country), 
+                                          size=0.2, show.legend = FALSE)
+timeline_plot<-timeline_plot+geom_text(data=dTime, aes(y=Position,
+                                                       label=Country, col = Country), 
+                                       size=3, show.legend = FALSE)
+
+# Plot scatter points at zero and date
+timeline_plot<-timeline_plot+geom_point(data=dTime, aes(x = Date, y=0, col = Country),
+                                        size=2, show.legend = FALSE)
+
+# Don't show axes, appropriately position legend
+timeline_plot<-timeline_plot+theme_classic()
+timeline_plot<-timeline_plot+theme(axis.line.y=element_blank(),
+                                   axis.text.y=element_blank(),
+                                   axis.title.x=element_blank(),
+                                   axis.title.y=element_blank(),
+                                   axis.ticks.y=element_blank(),
+                                   axis.text.x =element_blank(),
+                                   axis.ticks.x =element_blank(),
+                                   axis.line.x =element_blank(),
+                                   legend.position = "bottom"
+)
+
+# Plot horizontal black line for timeline
+timeline_plot<-timeline_plot+geom_hline(yintercept=0, 
+                                        color = "black", size=0.3)
+
+# Show text for each month
+timeline_plot<-timeline_plot+geom_text(data=month_df, 
+                                       aes(x=month_date_range,y=-0.5,label=month_format),
+                                       size=2.5,vjust=0.5, color='black', angle=90)
+# Show year text
+timeline_plot<-timeline_plot+geom_text(data=year_df,
+                                       aes(x=year_date_range,y=-1.5,label=year_format,
+                                           fontface="bold"),size=2.5, color='black')
+
+print(timeline_plot)
