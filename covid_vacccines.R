@@ -161,6 +161,6 @@ timeline_plot<-timeline_plot+geom_text(data=year_df,
 
 LastDay <- max(data$date)
 
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2024-01-01"), y=8, label= "Forecasted date of 70% population fully vaccinated")
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2024-01-01"), y=8, label= "Forecast: date of 70% population fully vaccinated")
 timeline_plot <- timeline_plot + annotate("text", x=as.Date("2024-01-01"), y=7.5, label= paste("Predicted using data up to",LastDay ) )
 print(timeline_plot)
