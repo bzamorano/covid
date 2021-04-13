@@ -102,15 +102,15 @@ dTime <- dTime[with(dTime, order(Date)), ]
 dTime$Date <- ymd(dTime$Date)
 dTime$Position <- as.numeric(dTime$Position)
 
-month_buffer <- 2
+month_buffer <- 60
 
-month_date_range <- seq(min(dTime$Date) - months(month_buffer), 
-                        max(dTime$Date) + months(month_buffer), by='month')
+month_date_range <- seq.Date(min(dTime$Date) - month_buffer, 
+                        max(dTime$Date) + month_buffer, by='month')
 month_format <- format(month_date_range, '%b')
 month_df <- data.frame(month_date_range, month_format)
 
-year_date_range <- seq(min(dTime$Date) - months(month_buffer), 
-                       max(dTime$Date) + months(month_buffer), by='year')
+year_date_range <- seq(min(dTime$Date) - month_buffer, 
+                       max(dTime$Date) + month_buffer, by='year')
 year_date_range <- as.Date(
   intersect(
     ceiling_date(year_date_range, unit="year"),
