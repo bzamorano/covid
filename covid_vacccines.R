@@ -12,8 +12,8 @@ data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 data$date <- as.POSIXct(strptime(data$date, "%Y-%m-%d"))
 data$total_cases <- as.numeric(data$total_cases)
 
-countries <- c("Israel", "United Kingdom", "United States", "Italy", "Spain",
-               "France", "Germany", "Belgium", "Portugal", "Brazil" )
+countries <- c("Israel", "United Kingdom", "United States", "Sweden", "Italy", "Spain",
+               "France", "Germany", "Belgium", "Portugal", "Brazil")
 
 get_date <- function(country){
 
@@ -37,7 +37,7 @@ get_date <- function(country){
   }
   x["Days"] <- ddays
     
-  if (country == "United States" | country == "Germany") {
+  if (country == "United States" | country == "Germany"  | country == "Sweden") {
     # Este modelo funciona en USA
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.4, B=0.003, C=2))

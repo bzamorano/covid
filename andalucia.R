@@ -315,3 +315,11 @@ dd%>%
   annotate("text", x=as.POSIXct("2020-04-15"), y=850,
            label = paste("Granada", LastDay)) +
   labs(x = "Fecha", y = "Hospital + UCI 14 días")
+
+# Evolucion mortalidad
+dd%>%
+  filter(Provincia == "Granada" & Fecha > "2020-04-01") %>%
+  ggplot(aes(x = Fecha)) +
+  geom_line(aes(y = (Fallecidos/Hospitalizados)), colour = "darkviolet", size = 1) + 
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = "Fecha", y = "Fallecidos / Hospitalizados")
