@@ -19,33 +19,26 @@ get_date <- function(country){
 
   dd <- data[data$location == country,]
   
-#  dd %>%
-#    filter(date > "2021-01-01") %>%
-#    ggplot(aes(x=date)) +
-#    geom_line(aes(y = people_vaccinated_per_hundred, colour = "1 dosis"), size = 1) + 
-#    geom_line(aes(y = people_fully_vaccinated_per_hundred, colour = "2 dosis"), size = 1) +
-#    labs(x = "Fecha", y = "Vacunados", colour="Dosis")
-  
   x <- dd %>%
     filter(date > "2021-01-01")
   x <- x[, c(4,42)]
   
   ddays <- integer(length(x[,1]))
   for (i in 1:length(x[,1]) ) {
-#    ddays[i] <- as.integer(x[i,1]-as.POSIXct("2021-01-01"))
     ddays[i] <- i
   }
   x["Days"] <- ddays
     
-  if (country == "United States" | country == "Germany"  | country == "Sweden") {
+  if (country == "United States" | country == "Germany"  | country == "Sweden" | 
+      country == "Italy" | country == "France") {
     # Este modelo funciona en USA
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.4, B=0.003, C=2))
-  }else if(country == "United Kingdom") {
+  }else if(country == "United Kingdom" | country == "Brazil") {
     # Este modelo funciona en UK
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=0.7, B=1.5e-11, C=6))
-  }else if(country == "Spain" || country == "Portugal" || country == "Italy"){
+  }else if(country == "Spain" | country == "Portugal"){
     # Modelo para España
     f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)^E+C*sin( (Days-D)/7 ), data = x, 
                   start=list(A=0.065, B=-1, C=0.35, D=30, E =1))
@@ -56,7 +49,7 @@ get_date <- function(country){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)+C*sin( (Days-D)/7 ), data = x, 
                   start=list(A=0.065, B=-1, C=0.35, D=30))
   }
-
+  
   p <- plotPoints(people_fully_vaccinated_per_hundred ~ Days, data = x, 
              xlab="Días desde 1 enero",
              ylab="Personas totalmente vacunadas (%)",
@@ -161,6 +154,6 @@ timeline_plot<-timeline_plot+geom_text(data=year_df,
 
 LastDay <- max(data$date)
 
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2024-01-01"), y=8, label= "Forecast: date of 70% population fully vaccinated")
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2024-01-01"), y=7.5, label= paste("Predicted using data up to",LastDay ) )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2023-01-01"), y=8, label= "Forecast: date of 70% population fully vaccinated")
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2023-01-01"), y=7.5, label= paste("Predicted using data up to",LastDay ) )
 print(timeline_plot)

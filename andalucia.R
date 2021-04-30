@@ -243,31 +243,31 @@ dd%>%
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 14 días")
 
-# Hospitalizados y UCI
+# Hospitalizados vs fallecidos
 dd%>%
   filter(Provincia == "Granada") %>%
   ggplot(aes(x = Fecha)) +
-  geom_line(aes(y = Hospital_14d*(Hospital_14d > 0)), colour = "darkmagenta", size = 1) + 
-  geom_line(aes(y = 5*UCI_14d*(UCI_14d > 0)), colour = "darkgreen", size = 1) +
-  scale_y_continuous(sec.axis = sec_axis(~ . / 5, name = "UCI 14 días")) +
-  theme( axis.line.y.right = element_line(color = "darkgreen"), 
-         axis.ticks.y.right = element_line(color = "darkgreen"),
-         axis.text.y.right = element_text(color = "darkgreen"),
-         axis.title.y.right = element_text(color = "darkgreen")) +
-  theme( axis.line.y.left = element_line(color = "darkmagenta"), 
-         axis.ticks.y.left = element_line(color = "darkmagenta"),
-         axis.text.y.left = element_text(color = "darkmagenta"),
-         axis.title.y.left = element_text(color = "darkmagenta")) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=850,
+  geom_line(aes(y = Hospital_14d*(Hospital_14d > 0)), colour = "darkgreen", size = 1) + 
+  geom_line(aes(y = Fallecidos_14d*(Fallecidos_14d > 0)), colour = "red", size = 1) +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 1, name = "Fallecidos 14 días")) +
+  theme( axis.line.y.right = element_line(color = "red"), 
+         axis.ticks.y.right = element_line(color = "red"),
+         axis.text.y.right = element_text(color = "red"),
+         axis.title.y.right = element_text(color = "red")) +
+  theme( axis.line.y.left = element_line(color = "darkgreen"), 
+         axis.ticks.y.left = element_line(color = "darkgreen"),
+         axis.text.y.left = element_text(color = "darkgreen"),
+         axis.title.y.left = element_text(color = "darkgreen")) +
+  annotate("text", x=as.POSIXct("2020-05-01"), y=850,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=800, 
-           label= paste("Hospitalizados 14 días:", FortnightHospGRX), color = "darkmagenta") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=760,
-           label= paste("Total hospital:", TotHospGRX), color = "darkmagenta") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=700, 
-           label= paste("UCI 14 días:", FortnightUCIGRX), color = "darkgreen") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=660,
-           label= paste("Total UCI:", TotUCIGRX), color = "darkgreen") +
+  annotate("text", x=as.POSIXct("2020-05-01"), y=800, 
+           label= paste("Hospitalizados 14 días:", FortnightHospGRX), color = "darkgreen") +
+  annotate("text", x=as.POSIXct("2020-05-01"), y=760,
+           label= paste("Total hospital:", TotHospGRX), color = "darkgreen") +
+  annotate("text", x=as.POSIXct("2020-05-01"), y=700, 
+           label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
+  annotate("text", x=as.POSIXct("2020-05-01"), y=660,
+           label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Hospitalizados 14 días")
 
 # A 14 días UCI y fallecidos
@@ -296,25 +296,6 @@ dd%>%
   annotate("text", x=as.POSIXct("2020-04-15"), y=160,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "UCI 14 días")
-
-# A 14 días Hospital y fallecidos
-dd%>%
-  filter(Provincia == "Granada") %>%
-  ggplot(aes(x = Fecha)) +
-  geom_line(aes(y = (Hospital_14d+UCI_14d)), colour = "darkviolet", size = 1) + 
-  geom_line(aes(y = Fallecidos_14d*(UCI_14d > 0)), colour = "red", size = 1) +
-  scale_y_continuous(sec.axis = sec_axis(~ . / 1, name = "Fallecidos 14 días")) +
-  theme( axis.line.y.right = element_line(color = "red"), 
-         axis.ticks.y.right = element_line(color = "red"),
-         axis.text.y.right = element_text(color = "red"),
-         axis.title.y.right = element_text(color = "red")) +
-  theme( axis.line.y.left = element_line(color = "darkviolet"), 
-         axis.ticks.y.left = element_line(color = "darkviolet"),
-         axis.text.y.left = element_text(color = "darkviolet"),
-         axis.title.y.left = element_text(color = "darkviolet")) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=850,
-           label = paste("Granada", LastDay)) +
-  labs(x = "Fecha", y = "Hospital + UCI 14 días")
 
 # Evolucion mortalidad
 dd%>%
