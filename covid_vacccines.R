@@ -29,19 +29,19 @@ get_date <- function(country){
   }
   x["Days"] <- ddays
     
-  if (country == "United States" | country == "Germany"  | country == "Sweden" | 
-      country == "Italy" | country == "France") {
+  if (country == "United States" | country == "Germany"  | country == "Sweden") {
     # Este modelo funciona en USA
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.4, B=0.003, C=2))
-  }else if(country == "United Kingdom" | country == "Brazil") {
+  }else if(country == "United Kingdom" | country == "Brazil" | country == "Italy"
+           | country == "France") {
     # Este modelo funciona en UK
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
-                  start=list(A=0.7, B=1.5e-11, C=6))
+                  start=list(A=0.3, B=8.3e-8, C=4))
   }else if(country == "Spain" | country == "Portugal"){
     # Modelo para España
     f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)^E+C*sin( (Days-D)/7 ), data = x, 
-                  start=list(A=0.065, B=-1, C=0.35, D=30, E =2))
+                  start=list(A=0.003, B=1, C=0.6, D=30, E =8))
   }else if(country == "Israel"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-10, B=2, C=0.8))

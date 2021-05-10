@@ -183,9 +183,10 @@ dd%>%
   ggplot(aes(x=Fecha, y=Confirmados_14d * 1e5/Poblacion, colour=Provincia)) +
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Incidencia acumulada") +
-  annotate("text", x=LastDay-86400*15, y=1500, label= LastDay) +
-  annotate("text", x=LastDay-86400*15, y=1400, label= paste("Andalucía:", round(IncTot))) +
-  annotate("text", x=LastDay-86400*15, y=1300, label= paste("Granada:", round(IncGRX)))
+  geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
+  annotate("text", x=as.POSIXct("2021-04-01"), y=1500, label= LastDay) +
+  annotate("text", x=as.POSIXct("2021-04-01"), y=1400, label= paste("Andalucía:", round(IncTot))) +
+  annotate("text", x=as.POSIXct("2021-04-01"), y=1300, label= paste("Granada:", round(IncGRX)))
 
 #Summary for GRX
 dd%>%
@@ -202,7 +203,7 @@ dd%>%
          axis.ticks.y.left = element_line(color = "blue"),
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
-  geom_vline(xintercept = as.POSIXct("2020-12-25"), col = "green", size = 1.25) +
+  geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   annotate("text", x=as.POSIXct("2021-01-25"), y=7900,
            label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2021-01-25"), y=7400, 
@@ -285,6 +286,7 @@ dd%>%
          axis.ticks.y.left = element_line(color = "darkgreen"),
          axis.text.y.left = element_text(color = "darkgreen"),
          axis.title.y.left = element_text(color = "darkgreen")) +
+  geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=220,
            label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=200, 
