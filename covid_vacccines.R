@@ -29,11 +29,7 @@ get_date <- function(country){
   }
   x["Days"] <- ddays
     
-  if (country == "United States" | country == "Germany"  | country == "Sweden") {
-    # Este modelo funciona en USA
-    f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
-                  start=list(A=-0.4, B=0.003, C=2))
-  }else if(country == "United Kingdom" | country == "Brazil" | country == "Italy"
+  if(country == "United Kingdom" | country == "Brazil" | country == "Italy"
            | country == "France") {
     # Este modelo funciona en UK
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
@@ -46,8 +42,8 @@ get_date <- function(country){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-10, B=2, C=0.8))
   }else{
-    f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)+C*sin( (Days-D)/7 ), data = x, 
-                  start=list(A=0.065, B=-1, C=0.35, D=30))
+    f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
+                  start=list(A=-0.4, B=0.003, C=2))
   }
   
   p <- plotPoints(people_fully_vaccinated_per_hundred ~ Days, data = x, 
@@ -154,6 +150,6 @@ timeline_plot<-timeline_plot+geom_text(data=year_df,
 
 LastDay <- max(data$date)
 
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2023-01-01"), y=8, label= "Forecast: date of 70% population fully vaccinated")
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2023-01-01"), y=7.5, label= paste("Predicted using data up to",LastDay ) )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-01-15"), y=8, label= "Forecast: date of 70% population fully vaccinated")
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-01-15"), y=7.5, label= paste("Predicted using data up to",LastDay ) )
 print(timeline_plot)
