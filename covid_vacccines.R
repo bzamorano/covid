@@ -12,8 +12,15 @@ data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 data$date <- as.POSIXct(strptime(data$date, "%Y-%m-%d"))
 data$total_cases <- as.numeric(data$total_cases)
 
-countries <- c("Israel", "United Kingdom", "United States", "Sweden", "Italy", "Spain",
-               "France", "Germany", "Belgium", "Portugal", "Brazil")
+countries <- c("India", "United States", "Brazil", "Mexico", "Japan",
+               "Germany", "France",
+               "United Kingdom",
+               "Italy", "Spain", "Belgium", "Sweden", "Portugal", "Israel")
+
+populations <- c(1377123716, 331695937, 213154869, 126014024, 125410000,
+                 83190556, 67406000,
+                 66796807, 
+                 59226539, 47351567, 11560220, 10389806, 10295909, 9347117)
 
 get_date <- function(country){
 
@@ -30,8 +37,9 @@ get_date <- function(country){
   x["Days"] <- ddays
     
   if(country == "United Kingdom" | country == "Brazil" | country == "Italy"
-           | country == "France") {
-    # Este modelo funciona en UK
+           | country == "France" | country == "India" | country == "Mexico"
+           | country == "Japan") {
+    # En realidad es el modelo más genérico
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=0.3, B=8.3e-8, C=4))
   }else if(country == "Spain" | country == "Portugal"){
@@ -77,7 +85,8 @@ for (country in countries) {
   
   dTime[FirstNAindex, 1] <- country
   dTime[FirstNAindex, 2] <- as.character(plotAndFun[[3]])
-  dTime[FirstNAindex, 3] <- length(countries) *1./FirstNAindex
+  #dTime[FirstNAindex, 3] <- length(countries) *1./FirstNAindex
+  dTime[FirstNAindex, 3] <- 10 * log10(1 + populations[FirstNAindex]*10./max(populations) )
   
   plot(plotAndFun[[1]])
   plot(plotFun(plotAndFun[[2]], col = "red", add = TRUE))
@@ -150,6 +159,6 @@ timeline_plot<-timeline_plot+geom_text(data=year_df,
 
 LastDay <- max(data$date)
 
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-01-15"), y=8, label= "Forecast: date of 70% population fully vaccinated")
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-01-15"), y=7.5, label= paste("Predicted using data up to",LastDay ) )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-04-15"), y=8, label= "Forecast: date of 70% population fully vaccinated")
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-04-15"), y=7.5, label= paste("Predicted using data up to",LastDay ) )
 print(timeline_plot)
