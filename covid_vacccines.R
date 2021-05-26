@@ -12,15 +12,13 @@ data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 data$date <- as.POSIXct(strptime(data$date, "%Y-%m-%d"))
 data$total_cases <- as.numeric(data$total_cases)
 
-countries <- c("India", "United States", "Brazil", "Mexico", "Japan",
-               "Germany", "France",
-               "United Kingdom",
-               "Italy", "Spain", "Belgium", "Sweden", "Portugal", "Israel")
+countries <- c("Israel", "United Kingdom", "United States", "Spain", "Mexico",
+               "Portugal", "Italy", "Brazil", "France", "Japan",
+               "Belgium", "Germany", "India", "Sweden")
 
-populations <- c(1377123716, 331695937, 213154869, 126014024, 125410000,
-                 83190556, 67406000,
-                 66796807, 
-                 59226539, 47351567, 11560220, 10389806, 10295909, 9347117)
+populations <- c(9347117, 66796807, 331695937, 47351567, 126014024,
+                 10295909, 59226539, 213154869, 67406000, 125410000,
+                 11560220, 83190556, 1377123716, 10389806)
 
 get_date <- function(country){
 
@@ -37,7 +35,8 @@ get_date <- function(country){
   x["Days"] <- ddays
     
   if(country == "United Kingdom" | country == "Italy"
-           | country == "France" | country == "India")
+           | country == "France" | country == "India"
+           | country == "Belgium")
     {
     # En realidad es el modelo más genérico
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
@@ -75,11 +74,14 @@ get_date <- function(country){
   
   theDay <- as.Date("2021-01-01")+i
   
+  theMax <- max(x$people_fully_vaccinated_per_hundred, na.rm = TRUE)
+  
   print(paste("El 70% se obtiene en", country,"el", theDay))
-  return(list(p, f, theDay))
+  
+  return(list(p, f, theDay, theMax))
 }
 
-dTime <- matrix(nrow = length(countries), ncol = 3)
+dTime <- matrix(nrow = length(countries), ncol = 4)
 
 for (country in countries) {
   plotAndFun <- get_date(country)
@@ -88,8 +90,8 @@ for (country in countries) {
   
   dTime[FirstNAindex, 1] <- country
   dTime[FirstNAindex, 2] <- as.character(plotAndFun[[3]])
-  #dTime[FirstNAindex, 3] <- length(countries) *1./FirstNAindex
-  dTime[FirstNAindex, 3] <- 10 * log10(1 + populations[FirstNAindex]*10./max(populations) )
+  dTime[FirstNAindex, 3] <- 12 * log10(1 + populations[FirstNAindex]*10./max(populations) )
+  dTime[FirstNAindex, 4] <- round(plotAndFun[[4]])
   
   plot(plotAndFun[[1]])
   plot(plotFun(plotAndFun[[2]], col = "red", add = TRUE))
@@ -97,7 +99,7 @@ for (country in countries) {
 
 # Timeline
 dTime <- as.data.frame(dTime)
-names(dTime) <- c("Country", "Date", "Position")
+names(dTime) <- c("Country", "Date", "Position", "Total")
 
 dTime <- dTime[with(dTime, order(Date)), ]
 dTime$Date <- ymd(dTime$Date)
@@ -122,13 +124,14 @@ year_format <- format(year_date_range, '%Y')
 year_df <- data.frame(year_date_range, year_format)
 
 # Timeline plot
-timeline_plot<-ggplot(dTime, aes(x=Date,y=0))
-timeline_plot<-timeline_plot+geom_segment(data=dTime, aes(y=Position -0.3, 
-                                                          yend=0, xend=Date, col = Country), 
-                                          size=0.2, show.legend = FALSE)
-timeline_plot<-timeline_plot+geom_text(data=dTime, aes(y=Position,
-                                                       label=Country, col = Country), 
-                                       size=3, show.legend = FALSE)
+timeline_plot <- ggplot(dTime, aes(x=Date,y=0)) +
+              geom_segment(data=dTime, aes(y=Position -0.3, 
+                            yend=0, xend=Date, col = Country), 
+                            size=0.2, show.legend = FALSE) +
+              geom_text(data=dTime, aes(y=Position+0.5,
+                            label = paste0(Country, "\n(", Total, "%)"),
+                            col = Country), 
+                            size=3, show.legend = FALSE)
 
 # Plot scatter points at zero and date
 timeline_plot<-timeline_plot+geom_point(data=dTime, aes(x = Date, y=0, col = Country),
@@ -162,6 +165,6 @@ timeline_plot<-timeline_plot+geom_text(data=year_df,
 
 LastDay <- max(data$date)
 
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=8, label= "Forecast: date of 70% population fully vaccinated")
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=7.5, label= paste("Predicted using data up to",LastDay ) )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=10, label= "Forecast: date of 70% population fully vaccinated")
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=9.25, label= paste("Predicted using data up to",LastDay ) )
 print(timeline_plot)
