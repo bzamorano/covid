@@ -48,9 +48,12 @@ get_date <- function(country){
   }else if(country == "Israel"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-10, B=2, C=0.8))
-  }else if(country == "Japan" | country == "Mexico"){
+  }else if(country == "Japan"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
-                  start=list(A=-0.1, B=1.3e-9, C=4))
+                  start=list(A=-0.01, B=4e-12, C=6))
+  }else if( country == "Mexico"){
+    f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
+                  start=list(A=-0.1, B=2.7e-8, C=4))
   }else{
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.4, B=0.003, C=2))
@@ -167,4 +170,5 @@ LastDay <- max(data$date)
 
 timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=10, label= "Forecast: date of 70% population fully vaccinated")
 timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=9.25, label= paste("Predicted using data up to",LastDay ) )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=8.5, label= "Percentage shows current number" )
 print(timeline_plot)
