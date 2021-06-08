@@ -231,7 +231,7 @@ dd%>%
          axis.ticks.y.left = element_line(color = "blue"),
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
-#  geom_vline(xintercept = as.POSIXct("2020-12-25"), col = "green", size = 1.25) +
+  geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   annotate("text", x=as.POSIXct("2021-01-25"), y=15000,
            label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2021-01-25"), y=14000, 
@@ -259,6 +259,7 @@ dd%>%
          axis.ticks.y.left = element_line(color = "darkgreen"),
          axis.text.y.left = element_text(color = "darkgreen"),
          axis.title.y.left = element_text(color = "darkgreen")) +
+  geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   annotate("text", x=as.POSIXct("2020-05-01"), y=850,
            label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-05-01"), y=800, 
@@ -305,4 +306,5 @@ dd%>%
   ggplot(aes(x = Fecha)) +
   geom_line(aes(y = (Fallecidos/Hospitalizados)), colour = "darkviolet", size = 1) + 
   scale_y_continuous(labels = scales::percent) +
+  geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   labs(x = "Fecha", y = "Fallecidos / Hospitalizados")
