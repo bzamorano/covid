@@ -44,7 +44,7 @@ get_date <- function(country){
   }else if(country == "Spain"){
     # Modelo para España
     f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)^E+C*sin( (Days-D)/7 ), data = x, 
-                  start=list(A=0.003, B=1, C=0.6, D=30, E =8))
+                  start=list(A=4e-4, B=1, C=0.6, D=30, E =57))
   }else if(country == "Israel"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-10, B=2, C=0.8))
@@ -112,7 +112,10 @@ dTime <- dTime[with(dTime, order(Date)), ]
 dTime$Date <- ymd(dTime$Date)
 dTime$Position <- as.numeric(dTime$Position)
 
-month_buffer <- 60
+# Dropping India of the chart until it gets closer
+dTime <- dTime %>% filter(Country != "India")
+
+month_buffer <- 30
 
 month_date_range <- seq.Date(min(dTime$Date) - month_buffer, 
                         max(dTime$Date) + month_buffer, by='month')
@@ -174,7 +177,7 @@ if(length(month_date_range) >= 12){
 
 LastDay <- max(data$date)
 
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=10, label= "Forecast: date of 70% population fully vaccinated")
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=9.25, label= paste("Predicted using data up to",LastDay ) )
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-12-15"), y=8.5, label= "Percentage shows current number" )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=10, label= "Forecast: date of 70% population fully vaccinated")
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=9.25, label= paste("Predicted using data up to",LastDay ) )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=8.5, label= "Percentage shows current number" )
 print(timeline_plot)
