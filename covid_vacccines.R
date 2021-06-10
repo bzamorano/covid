@@ -36,8 +36,7 @@ get_date <- function(country){
     
   if(country == "Italy"
            | country == "France"
-           | country == "Germany" | country == "Portugal"
-           | country == "Sweden")
+           | country == "Germany" | country == "Portugal")
     {
     # En realidad es el modelo más genérico
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
@@ -55,7 +54,8 @@ get_date <- function(country){
   }else if(country == "Mexico" | country == "Belgium" ){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.1, B=2.7e-8, C=4))
-  }else if(country == "Brazil" | country == "India"){
+  }else if(country == "Brazil" | country == "India"
+           | country == "Sweden"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.3, B=2.7e-5, C=2.6))
   }else{

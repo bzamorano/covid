@@ -244,17 +244,17 @@ dd%>%
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 14 días")
 
-# Hospitalizados vs fallecidos
+# Hospitalizados vs UCI
 dd%>%
   filter(Provincia == "Granada") %>%
   ggplot(aes(x = Fecha)) +
   geom_line(aes(y = Hospital_14d*(Hospital_14d > 0)), colour = "darkgreen", size = 1) + 
-  geom_line(aes(y = Fallecidos_14d*(Fallecidos_14d > 0)), colour = "red", size = 1) +
-  scale_y_continuous(sec.axis = sec_axis(~ . / 1, name = "Fallecidos 14 días")) +
-  theme( axis.line.y.right = element_line(color = "red"), 
-         axis.ticks.y.right = element_line(color = "red"),
-         axis.text.y.right = element_text(color = "red"),
-         axis.title.y.right = element_text(color = "red")) +
+  geom_line(aes(y = 4*UCI_14d*(UCI_14d > 0)), colour = "purple", size = 1) + 
+  scale_y_continuous(sec.axis = sec_axis(~ . / 4, name = "UCI 14 días")) +
+  theme( axis.line.y.right = element_line(color = "purple"), 
+         axis.ticks.y.right = element_line(color = "purple"),
+         axis.text.y.right = element_text(color = "purple"),
+         axis.title.y.right = element_text(color = "purple")) +
   theme( axis.line.y.left = element_line(color = "darkgreen"), 
          axis.ticks.y.left = element_line(color = "darkgreen"),
          axis.text.y.left = element_text(color = "darkgreen"),
@@ -266,10 +266,10 @@ dd%>%
            label= paste("Hospitalizados 14 días:", FortnightHospGRX), color = "darkgreen") +
   annotate("text", x=as.POSIXct("2020-05-01"), y=760,
            label= paste("Total hospital:", TotHospGRX), color = "darkgreen") +
-  annotate("text", x=as.POSIXct("2020-05-01"), y=700, 
-           label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2020-05-01"), y=660,
-           label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=700, 
+           label= paste("UCI 14 días:", FortnightUCIGRX), color = "purple") +
+  annotate("text", x=as.POSIXct("2020-04-15"), y=660,
+           label= paste("Total UCI:", TotUCIGRX), color = "purple") +
   labs(x = "Fecha", y = "Hospitalizados 14 días")
 
 # A 14 días UCI y fallecidos
