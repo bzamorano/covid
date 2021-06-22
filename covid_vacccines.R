@@ -54,11 +54,11 @@ get_date <- function(country){
   }else if(country == "Japan"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=0.06, B=8e-14, C=6))
-  }else if(country == "Mexico" | country == "Belgium" ){
+  }else if(country == "Belgium" ){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.1, B=2.7e-8, C=4))
   }else if(country == "Brazil" | country == "India"
-           | country == "Sweden"){
+           | country == "Sweden" | country == "Mexico"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.3, B=2.7e-5, C=2.6))
   }else{
@@ -117,6 +117,7 @@ dTime$Position <- as.numeric(dTime$Position)
 
 # Dropping India of the chart until it gets closer
 dTime <- dTime %>% filter(Country != "India")
+dTime <- dTime %>% filter(Country != "Brazil")
 
 month_buffer <- 30
 
