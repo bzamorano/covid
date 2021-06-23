@@ -276,24 +276,24 @@ dd%>%
 dd%>%
   filter(Provincia == "Granada") %>%
   ggplot(aes(x = Fecha)) +
-  geom_line(aes(y = UCI_14d*(UCI_14d > 0)), colour = "darkgreen", size = 1) + 
+  geom_line(aes(y = UCI_14d*(UCI_14d > 0)), colour = "purple", size = 1) + 
   geom_line(aes(y = Fallecidos_14d*(UCI_14d > 0)), colour = "red", size = 1) +
   scale_y_continuous(sec.axis = sec_axis(~ . / 1, name = "Fallecidos 14 días")) +
   theme( axis.line.y.right = element_line(color = "red"), 
          axis.ticks.y.right = element_line(color = "red"),
          axis.text.y.right = element_text(color = "red"),
          axis.title.y.right = element_text(color = "red")) +
-  theme( axis.line.y.left = element_line(color = "darkgreen"), 
-         axis.ticks.y.left = element_line(color = "darkgreen"),
-         axis.text.y.left = element_text(color = "darkgreen"),
-         axis.title.y.left = element_text(color = "darkgreen")) +
+  theme( axis.line.y.left = element_line(color = "purple"), 
+         axis.ticks.y.left = element_line(color = "purple"),
+         axis.text.y.left = element_text(color = "purple"),
+         axis.title.y.left = element_text(color = "purple")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=220,
            label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-04-15"), y=200, 
-           label= paste("UCI 14 días:", FortnightUCIGRX), color = "darkgreen") +
+           label= paste("UCI 14 días:", FortnightUCIGRX), color = "purple") +
   annotate("text", x=as.POSIXct("2020-04-15"), y=190,
-           label= paste("Total UCI:", TotUCIGRX), color = "darkgreen") +
+           label= paste("Total UCI:", TotUCIGRX), color = "purple") +
   annotate("text", x=as.POSIXct("2020-04-15"), y=170, 
            label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
   annotate("text", x=as.POSIXct("2020-04-15"), y=160,
@@ -304,7 +304,7 @@ dd%>%
 dd%>%
   filter(Provincia == "Granada" & Fecha > "2020-04-01") %>%
   ggplot(aes(x = Fecha)) +
-  geom_line(aes(y = (Fallecidos/Hospitalizados)), colour = "darkviolet", size = 1) + 
+  geom_line(aes(y = (Fallecidos/Hospitalizados)), colour = "brown", size = 1) + 
   scale_y_continuous(labels = scales::percent) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   labs(x = "Fecha", y = "Fallecidos / Hospitalizados")
