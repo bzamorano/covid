@@ -20,12 +20,6 @@ populations <- c(9347117, 66796807, 331695937, 47351567, 126014024,
                  10295909, 59226539, 213154869, 67406000, 125410000,
                  11560220, 83190556, 1377123716, 10389806)
 
-# Get the last data entry for Spain
-data %>%
-  filter(location == "Spain") %>%
-  filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
-  summarise(LastDay = max(date), Total_vacc = max(people_fully_vaccinated_per_hundred))
-
 get_date <- function(country){
 
   dd <- data[data$location == country,]
@@ -189,3 +183,10 @@ timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=10,
 timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=9.25, label= paste("Predicted using data up to",LastDay ) )
 timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=8.5, label= "Percentage shows current number" )
 print(timeline_plot)
+
+# Print the last data entry for Spain
+print("Last data entry for Spain:")
+data %>%
+  filter(location == "Spain") %>%
+  filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
+  summarise(LastDay = max(date), Total_vacc = max(people_fully_vaccinated_per_hundred))
