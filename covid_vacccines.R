@@ -20,6 +20,12 @@ populations <- c(9347117, 66796807, 331695937, 47351567, 126014024,
                  10295909, 59226539, 213154869, 67406000, 125410000,
                  11560220, 83190556, 1377123716, 10389806)
 
+# Get the last data entry for Spain
+data %>%
+  filter(location == "Spain") %>%
+  filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
+  summarise(LastDay = max(date), Total_vacc = max(people_fully_vaccinated_per_hundred))
+
 get_date <- function(country){
 
   dd <- data[data$location == country,]
