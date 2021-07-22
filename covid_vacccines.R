@@ -117,8 +117,11 @@ dTime %>%
   arrange(desc(Total)) %>%
   ggplot(aes(x = reorder(Country, as.numeric(Total)), weight = as.numeric(Total))) +
   geom_bar(aes(fill = as.numeric(Total))) +
+  geom_text(aes(x = reorder(Country, as.numeric(Total)), y = as.numeric(Total) +3,
+                            label = paste0(Total, "%"),
+                            col = "black"), 
+            size=3, show.legend = FALSE) +
   scale_fill_gradient2( high = "darkred") +
-  theme_minimal() +
   guides(fill = FALSE) +
   coord_flip() +
   scale_y_continuous(labels = comma_format(big.mark = " ")) +
@@ -195,21 +198,6 @@ timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=10,
 timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=9.25, label= paste("Predicted using data up to",LastDay ) )
 timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=8.5, label= "Percentage shows current number" )
 print(timeline_plot)
-
-# Top Cases
-data %>%
-  group_by(countriesAndTerritories) %>%
-  summarise(Cases = max(totCases)) %>%
-  arrange(desc(Cases)) %>%
-  slice(1:15) %>%
-  ggplot(aes(x = reorder(countriesAndTerritories, Cases), weight = Cases)) +
-  geom_bar(aes(fill = Cases)) +
-  scale_fill_gradient2( high = "darkblue") +
-  theme_minimal() +
-  guides(fill = FALSE) +
-  coord_flip() +
-  scale_y_continuous(labels = comma_format(big.mark = " ")) +
-  labs(x = "Country", y = "Cases")
 
 
 # Print the last data entry for Spain
