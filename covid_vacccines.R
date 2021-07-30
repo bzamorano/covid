@@ -33,7 +33,13 @@ get_date <- function(country){
     ddays[i] <- i
   }
   x["Days"] <- ddays
-    
+  
+  x2 <- x %>%
+    filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
+    slice_tail(n = 7)
+  
+  f2 <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days, data = x2)
+
   if(country == "Italy"
            | country == "France"
            | country == "Germany" | country == "Portugal")
@@ -79,16 +85,29 @@ get_date <- function(country){
     }
   }
   
-  theDay <- as.Date("2021-01-01")+i
+  #Comparamos a ajuste lineal de los últimos 7 puntos
+  tv <- 0
+  i2 <- 0
+  while (tv < 70) {
+    i2 <- i2+1
+    tv <- f2(i2)
+    if (is.na(tv)) {
+      tv <- 0
+    }
+  }
+  
+  theDay  <- as.Date("2021-01-01") + min(i, i2)
+  theDay2 <- as.Date("2021-01-01") + max(i, i2)
   
   theMax <- max(x$people_fully_vaccinated_per_hundred, na.rm = TRUE)
   
-  print(paste("El 70% se obtiene en", country,"el", theDay))
+  print(paste("El 70% se obtiene en", country,"entre el", theDay,
+              "y el", theDay2))
   
-  return(list(p, f, theDay, theMax))
+  return(list(p, f, theDay, theMax, f2, theDay2))
 }
 
-dTime <- matrix(nrow = length(countries), ncol = 4)
+dTime <- matrix(nrow = length(countries), ncol = 5)
 
 for (country in countries) {
   plotAndFun <- get_date(country)
@@ -99,14 +118,16 @@ for (country in countries) {
   dTime[FirstNAindex, 2] <- as.character(plotAndFun[[3]])
   dTime[FirstNAindex, 3] <- 12 * log10(1 + populations[FirstNAindex]*10./max(populations) )
   dTime[FirstNAindex, 4] <- plotAndFun[[4]]
+  dTime[FirstNAindex, 5] <- as.character(plotAndFun[[6]])
   
   plot(plotAndFun[[1]])
   plot(plotFun(plotAndFun[[2]], col = "red", add = TRUE))
+  plot(plotFun(plotAndFun[[5]], col = "darkgreen", add = TRUE))
 }
 
 # Timeline
 dTime <- as.data.frame(dTime)
-names(dTime) <- c("Country", "Date", "Position", "Total")
+names(dTime) <- c("Country", "Date", "Position", "Total", "DateMax")
 
 dTime <- dTime[with(dTime, order(Date)), ]
 dTime$Date <- ymd(dTime$Date)
@@ -150,6 +171,11 @@ year_date_range <- as.Date(
 )
 year_format <- format(year_date_range, '%Y')
 year_df <- data.frame(year_date_range, year_format)
+
+time_plot <- ggplot(dTime, aes(x=as.Date(Date) + 0.5*(as.Date(DateMax)-as.Date(Date)) , y = Position))  +
+  geom_point(size = 2, aes(col = country)) +
+  geom_errorbarh(aes(xmin = as.Date(Date), xmax = as.Date(DateMax)) )
+  
 
 # Timeline plot
 timeline_plot <- ggplot(dTime, aes(x=Date,y=0)) +
