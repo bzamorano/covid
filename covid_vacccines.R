@@ -50,13 +50,13 @@ get_date <- function(country){
   }else if(country == "Spain"){
     # Modelo para España
     f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)^E+C*sin( (Days-D)/7 ), data = x, 
-                  start=list(A=0.002, B=1, C=0.5, D=33, E =12))
+                  start=list(A=0.01, B=0.57, C=0.44, D=40, E =4))
   }else if(country == "Israel"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A*log(B*(Days+C)), data = x, 
                   start=list(A=25, B=0.074, C=5.3))
   }else if(country == "Japan" | country == "Canada"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
-                  start=list(A=-0.03, B=3.0e-15, C=7))
+                  start=list(A=-0.75, B=1.5e-11, C=5.3))
   }else if(country == "Belgium" ){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.1, B=2.7e-8, C=4))
@@ -114,8 +114,12 @@ for (country in countries) {
   
   FirstNAindex <- min( which(is.na(dTime[,1])) )
   
+  minDate <- data %>% filter(location == country) %>% summarise(LastDay = max(date))
+  minDate <- as.Date(minDate[1,1])
+  minDate <- max(minDate, plotAndFun[[3]]) + 1
+  
   dTime[FirstNAindex, 1] <- country
-  dTime[FirstNAindex, 2] <- as.character(plotAndFun[[3]])
+  dTime[FirstNAindex, 2] <- as.character(minDate)
   dTime[FirstNAindex, 3] <- 12 * log10(1 + populations[FirstNAindex]*10./max(populations) )
   dTime[FirstNAindex, 4] <- plotAndFun[[4]]
   dTime[FirstNAindex, 5] <- as.character(plotAndFun[[6]])
@@ -149,11 +153,7 @@ dTime %>%
   scale_y_continuous(labels = comma_format(big.mark = " ")) +
   labs(x = "Country", y = "People fully vaccinated (%)")
 
-# Dropping India of the chart until it gets closer
-dTime <- dTime %>% filter(Country != "Mexico")
-dTime <- dTime %>% filter(Country != "India")
-dTime <- dTime %>% filter(Country != "Brazil")
-
+#Timeline(s)
 month_buffer <- 10
 
 month_date_range <- seq.Date(min(dTime$Date) - month_buffer, 
@@ -172,10 +172,10 @@ year_date_range <- as.Date(
 year_format <- format(year_date_range, '%Y')
 year_df <- data.frame(year_date_range, year_format)
 
-time_plot <- ggplot(dTime, aes(x=as.Date(Date) + 0.5*(as.Date(DateMax)-as.Date(Date)) , y = Position))  +
-  geom_point(size = 2, aes(col = country)) +
-  geom_errorbarh(aes(xmin = as.Date(Date), xmax = as.Date(DateMax)) )
-  
+# Dropping India of the chart until it gets closer
+#dTime <- dTime %>% filter(Country != "Mexico")
+#dTime <- dTime %>% filter(Country != "India")
+#dTime <- dTime %>% filter(Country != "Brazil")
 
 # Timeline plot
 timeline_plot <- ggplot(dTime, aes(x=Date,y=0)) +
@@ -233,3 +233,19 @@ data %>%
   filter(location == "Spain") %>%
   filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
   summarise(LastDay = max(date), Total_vacc = max(people_fully_vaccinated_per_hundred))
+
+# X-wing chart
+dTime %>%
+  ggplot(aes(col = Country, 
+             y=rank(Position), 
+             x=as.Date(Date) + 0.5*(as.Date(DateMax)-as.Date(Date))))  +
+  geom_point(show.legend = FALSE) +
+  geom_errorbarh(aes(xmin = as.Date(Date), xmax = as.Date(DateMax)), show.legend = FALSE) +
+  geom_text(aes(x = as.Date(DateMax)+50+nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
+  labs(x = "Date", y = "Country)") +
+  theme(axis.line.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  geom_vline(xintercept = as.Date(LastDay), col = "red", size = 1)
