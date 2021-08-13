@@ -26,7 +26,7 @@ get_date <- function(country){
   
   x <- dd %>%
     filter(date > "2021-01-01")
-  x <- x[, c(4,42)]
+  x <- x[, c("date","people_fully_vaccinated_per_hundred")]
   
   ddays <- integer(length(x[,1]))
   for (i in 1:length(x[,1]) ) {
