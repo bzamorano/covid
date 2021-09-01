@@ -40,33 +40,25 @@ get_date <- function(country){
   
   f2 <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days, data = x2)
 
-  if(country == "Italy"
-           | country == "France"
-           | country == "Germany" | country == "Portugal")
+  if(country == "Italy" | country == "Spain" | country == "Germany"
+     | country == "Belgium" | country == "Canada")
     {
     # En realidad es el modelo más genérico
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=0.3, B=8.3e-8, C=4))
-  }else if(country == "Spain"){
-    # Modelo para España
-    f <- fitModel(people_fully_vaccinated_per_hundred ~ (A*Days+B)^E+C*sin( (Days-D)/7 ), data = x, 
-                  start=list(A=0.01, B=0.57, C=0.44, D=40, E =4))
   }else if(country == "Israel"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A*log(B*(Days+C)), data = x, 
                   start=list(A=25, B=0.074, C=5.3))
-  }else if(country == "Japan" | country == "Canada"){
-    f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
-                  start=list(A=-0.75, B=1.5e-11, C=5.3))
-  }else if(country == "Belgium" ){
+  }else if(country == "Japan"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.1, B=2.7e-8, C=4))
-  }else if(country == "India" | country == "Sweden" 
-           | country == "Mexico"){
+  }else if(country == "India" | country == "Sweden" | country == "Portugal"
+           | country == "Mexico" | country == "Brazil" | country == "France"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.3, B=2.7e-5, C=2.6))
   }else{
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
-                  start=list(A=-0.4, B=0.003, C=2))
+                  start=list(A=-1, B=0.03, C=2))
   }
   
   p <- plotPoints(people_fully_vaccinated_per_hundred ~ Days, data = x, 
@@ -77,7 +69,7 @@ get_date <- function(country){
   #Predecimos fecha para el 70% de vacunación:
   tv <- 0
   i <- 0
-  while (tv < 70) {
+  while (tv < 80) {
     i <- i+1
     tv <- f(i)
     if (is.na(tv)) {
@@ -88,7 +80,7 @@ get_date <- function(country){
   #Comparamos a ajuste lineal de los últimos 7 puntos
   tv <- 0
   i2 <- 0
-  while (tv < 70) {
+  while (tv < 80) {
     i2 <- i2+1
     tv <- f2(i2)
     if (is.na(tv)) {
@@ -101,7 +93,7 @@ get_date <- function(country){
   
   theMax <- max(x$people_fully_vaccinated_per_hundred, na.rm = TRUE)
   
-  print(paste("El 70% se obtiene en", country,"entre el", theDay,
+  print(paste("El 80% se obtiene en", country,"entre el", theDay,
               "y el", theDay2))
   
   return(list(p, f, theDay, theMax, f2, theDay2))
