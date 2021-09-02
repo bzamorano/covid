@@ -127,6 +127,7 @@ names(dTime) <- c("Country", "Date", "Position", "Total", "DateMax")
 
 dTime <- dTime[with(dTime, order(Date)), ]
 dTime$Date <- ymd(dTime$Date)
+dTime$DateMax <- ymd(dTime$DateMax)
 dTime$Position <- as.numeric(dTime$Position)
 dTime$Total <- as.numeric(dTime$Total)
 
@@ -148,13 +149,13 @@ dTime %>%
 #Timeline(s)
 month_buffer <- 10
 
-month_date_range <- seq.Date(min(dTime$Date) - month_buffer, 
-                        max(dTime$Date) + month_buffer, by='month')
+month_date_range <- seq.Date(min(dTime$DateMax) - month_buffer, 
+                        max(dTime$DateMax) + month_buffer, by='month')
 month_format <- format(month_date_range, '%b')
 month_df <- data.frame(month_date_range, month_format)
 
-year_date_range <- seq(min(dTime$Date) - month_buffer, 
-                       max(dTime$Date) + month_buffer, by='year')
+year_date_range <- seq(min(dTime$DateMax) - month_buffer, 
+                       max(dTime$DateMax) + month_buffer, by='year')
 year_date_range <- as.Date(
   intersect(
     ceiling_date(year_date_range, unit="year"),
@@ -170,9 +171,9 @@ year_df <- data.frame(year_date_range, year_format)
 #dTime <- dTime %>% filter(Country != "Brazil")
 
 # Timeline plot
-timeline_plot <- ggplot(dTime, aes(x=Date,y=0)) +
+timeline_plot <- ggplot(dTime, aes(x=DateMax,y=0)) +
               geom_segment(data=dTime, aes(y=Position -0.3, 
-                            yend=0, xend=Date, col = Country), 
+                            yend=0, xend=DateMax, col = Country), 
                             size=0.2, show.legend = FALSE) +
               geom_text(data=dTime, aes(y=Position+0.5,
                             label = paste0(Country, "\n(", round(Total), "%)"),
@@ -180,7 +181,7 @@ timeline_plot <- ggplot(dTime, aes(x=Date,y=0)) +
                             size=3, show.legend = FALSE)
 
 # Plot scatter points at zero and date
-timeline_plot<-timeline_plot+geom_point(data=dTime, aes(x = Date, y=0, col = Country),
+timeline_plot<-timeline_plot+geom_point(data=dTime, aes(x = DateMax, y=0, col = Country),
                                         size=2, show.legend = FALSE)
 
 # Don't show axes, appropriately position legend
@@ -213,9 +214,9 @@ if(length(month_date_range) >= 12){
 
 LastDay <- max(data$date)
 
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=10, label= "Forecast: date of 70% population fully vaccinated")
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=9.25, label= paste("Predicted using data up to",LastDay ) )
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2021-08-15"), y=8.5, label= "Percentage shows current number" )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-02-15"), y=10.75, label= "Forecast: date of 80% population fully vaccinated")
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-02-15"), y=10, label= paste("Predicted using data up to",LastDay ) )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-02-15"), y=9.25, label= "Percentage shows current number" )
 print(timeline_plot)
 
 
