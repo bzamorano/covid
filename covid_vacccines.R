@@ -49,10 +49,10 @@ get_date <- function(country){
   }else if(country == "Israel"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A*log(B*(Days+C)), data = x, 
                   start=list(A=25, B=0.074, C=5.3))
-  }else if(country == "Japan"){
+  }else if(country == "Japan" | country == "India"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.1, B=2.7e-8, C=4))
-  }else if(country == "India" | country == "Sweden" | country == "Portugal"
+  }else if(country == "Sweden" | country == "Portugal"
            | country == "Mexico" | country == "Brazil" | country == "France"
            | country == "Italy"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
@@ -131,6 +131,10 @@ dTime$Date <- ymd(dTime$Date)
 dTime$DateMax <- ymd(dTime$DateMax)
 dTime$Position <- as.numeric(dTime$Position)
 dTime$Total <- as.numeric(dTime$Total)
+
+#Fix Portugal
+dTime$Date[dTime$Country == "Portugal"] <- "2021-09-12"
+dTime$DateMax[dTime$Country == "Portugal"] <- "2021-09-12"
 
 # Bar plot
 dTime %>%
