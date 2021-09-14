@@ -38,7 +38,7 @@ get_date <- function(country){
     filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
     slice_tail(n = 7)
   
-  f2 <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days, data = x2)
+  f2 <- linearModel(formula = people_fully_vaccinated_per_hundred ~ Days + 1, data = x2)
 
   if(country == "Spain" | country == "Germany"
      | country == "Belgium" | country == "Canada")
