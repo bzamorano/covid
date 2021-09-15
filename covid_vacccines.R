@@ -63,8 +63,8 @@ get_date <- function(country){
   }
   
   p <- plotPoints(people_fully_vaccinated_per_hundred ~ Days, data = x, 
-             xlab="Días desde 1 enero",
-             ylab="Personas totalmente vacunadas (%)",
+             xlab="Días desde 1 enero 2021",
+             ylab="Población totalmente vacunada (%)",
              main=country)
 
   #Predecimos fecha para el 70% de vacunación:
