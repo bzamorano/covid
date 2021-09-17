@@ -211,7 +211,7 @@ timeline_plot<-timeline_plot+geom_text(data=month_df,
                                        aes(x=month_date_range,y=-0.5,label=month_format),
                                        size=2.5,vjust=0.5, color='black', angle=90)
 # Show year text
-if(length(month_date_range) >= 12){
+if(length(month_date_range) > 12){
   timeline_plot<-timeline_plot+geom_text(data=year_df,
                                          aes(x=year_date_range,y=-1.5,label=year_format,
                                              fontface="bold"), size=2.5, color='black')
