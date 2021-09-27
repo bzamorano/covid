@@ -48,7 +48,7 @@ get_date <- function(country){
                   start=list(A=0.3, B=8.3e-8, C=4))
   }else if(country == "Israel"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A*log(B*(Days+C)), data = x, 
-                  start=list(A=25, B=0.074, C=5.3))
+                  start=list(A=20, B=0.12, C=1.2))
   }else if(country == "Japan" | country == "India"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.1, B=2.7e-8, C=4))
