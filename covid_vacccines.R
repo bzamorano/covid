@@ -39,7 +39,8 @@ get_date <- function(country){
     slice_tail(n = 7)
   
   nmindays <- 8
-  while(sd(x2$people_fully_vaccinated_per_hundred) < 0.2) {
+  while(range(x2$people_fully_vaccinated_per_hundred)[2] - 
+        range(x2$people_fully_vaccinated_per_hundred)[1] < 1.0) {
     x2 <- x %>%
       filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
       slice_tail(n = nmindays)
