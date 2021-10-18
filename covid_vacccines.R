@@ -38,6 +38,14 @@ get_date <- function(country){
     filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
     slice_tail(n = 7)
   
+  nmindays <- 8
+  while(sd(x2$people_fully_vaccinated_per_hundred) < 0.2) {
+    x2 <- x %>%
+      filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
+      slice_tail(n = nmindays)
+      nmindays = nmindays +1
+  }
+  
   f2 <- linearModel(formula = people_fully_vaccinated_per_hundred ~ Days + 1, data = x2)
 
   if(country == "Israel"){
@@ -208,9 +216,9 @@ if(length(month_date_range) > 12){
 
 LastDay <- max(data$date)
 
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-02-15"), y=10.75, label= "Forecast: date of 80% population fully vaccinated")
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-02-15"), y=10, label= paste("Predicted using data up to",LastDay ) )
-timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-02-15"), y=9.25, label= "Percentage shows current number" )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-05-15"), y=10.75, label= "Forecast: date of 80% population fully vaccinated")
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-05-15"), y=10, label= paste("Predicted using data up to",LastDay ) )
+timeline_plot <- timeline_plot + annotate("text", x=as.Date("2022-05-15"), y=9.25, label= "Percentage shows current number" )
 print(timeline_plot)
 
 
