@@ -55,7 +55,7 @@ get_date <- function(country){
   }else if(country == "Japan" | country == "India"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.1, B=2.7e-8, C=4))
-  }else if(country == "Sweden" | country == "Portugal"  | country == "Spain"
+  }else if(country == "Portugal"  | country == "Spain"
            | country == "Mexico" | country == "Brazil"  | country == "France"
            | country == "Italy"  | country == "Belgium" | country == "Canada"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
@@ -164,6 +164,12 @@ month_df <- data.frame(month_date_range, month_format)
 
 year_date_range <- seq(min(dTime$DateMax) - month_buffer, 
                        max(dTime$DateMax) + month_buffer, by='year')
+
+if(max(dTime$DateMax) >= "2023-01-01"){
+  year_date_range <- seq(min(dTime$DateMax) - month_buffer, 
+                         max(dTime$DateMax) + 365, by='year')
+}
+
 year_date_range <- as.Date(
   intersect(
     ceiling_date(year_date_range, unit="year"),
