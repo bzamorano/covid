@@ -1,4 +1,85 @@
 Fecha;Territorio;Medida;Valor;
+22/10/2021;Andalucía;Confirmados PDIA;806715;
+22/10/2021;Andalucía;Aumento;275;
+22/10/2021;Andalucía;Confirmados PDIA 14 días;2631;
+22/10/2021;Andalucía;Confirmados PDIA 7 días;1258;
+22/10/2021;Andalucía;Total confirmados ;812233;
+22/10/2021;Andalucía;Hospitalizados;57110;
+22/10/2021;Andalucía;Total UCI;6248;
+22/10/2021;Andalucía;Fallecidos;11319;
+22/10/2021;Andalucía;Curados;793546;
+22/10/2021;Almería;Confirmados PDIA;70545;
+22/10/2021;Almería;Aumento;55;
+22/10/2021;Almería;Confirmados PDIA 14 días;447;
+22/10/2021;Almería;Confirmados PDIA 7 días;201;
+22/10/2021;Almería;Total confirmados ;70858;
+22/10/2021;Almería;Hospitalizados;4455;
+22/10/2021;Almería;Total UCI;759;
+22/10/2021;Almería;Fallecidos;928;
+22/10/2021;Almería;Curados;69284;
+22/10/2021;Cádiz;Confirmados PDIA;112734;
+22/10/2021;Cádiz;Aumento;31;
+22/10/2021;Cádiz;Confirmados PDIA 14 días;195;
+22/10/2021;Cádiz;Confirmados PDIA 7 días;97;
+22/10/2021;Cádiz;Total confirmados ;113125;
+22/10/2021;Cádiz;Hospitalizados;6716;
+22/10/2021;Cádiz;Total UCI;688;
+22/10/2021;Cádiz;Fallecidos;1617;
+22/10/2021;Cádiz;Curados;110542;
+22/10/2021;Córdoba;Confirmados PDIA;72376;
+22/10/2021;Córdoba;Aumento;17;
+22/10/2021;Córdoba;Confirmados PDIA 14 días;194;
+22/10/2021;Córdoba;Confirmados PDIA 7 días;110;
+22/10/2021;Córdoba;Total confirmados ;72871;
+22/10/2021;Córdoba;Hospitalizados;5328;
+22/10/2021;Córdoba;Total UCI;661;
+22/10/2021;Córdoba;Fallecidos;1091;
+22/10/2021;Córdoba;Curados;71369;
+22/10/2021;Granada;Confirmados PDIA;109179;
+22/10/2021;Granada;Aumento;25;
+22/10/2021;Granada;Confirmados PDIA 14 días;262;
+22/10/2021;Granada;Confirmados PDIA 7 días;124;
+22/10/2021;Granada;Total confirmados ;110015;
+22/10/2021;Granada;Hospitalizados;9186;
+22/10/2021;Granada;Total UCI;1172;
+22/10/2021;Granada;Fallecidos;1874;
+22/10/2021;Granada;Curados;107284;
+22/10/2021;Huelva;Confirmados PDIA;45730;
+22/10/2021;Huelva;Aumento;26;
+22/10/2021;Huelva;Confirmados PDIA 14 días;303;
+22/10/2021;Huelva;Confirmados PDIA 7 días;134;
+22/10/2021;Huelva;Total confirmados ;45932;
+22/10/2021;Huelva;Hospitalizados;2831;
+22/10/2021;Huelva;Total UCI;215;
+22/10/2021;Huelva;Fallecidos;418;
+22/10/2021;Huelva;Curados;44790;
+22/10/2021;Jaén;Confirmados PDIA;64122;
+22/10/2021;Jaén;Aumento;21;
+22/10/2021;Jaén;Confirmados PDIA 14 días;138;
+22/10/2021;Jaén;Confirmados PDIA 7 días;86;
+22/10/2021;Jaén;Total confirmados ;64682;
+22/10/2021;Jaén;Hospitalizados;5217;
+22/10/2021;Jaén;Total UCI;489;
+22/10/2021;Jaén;Fallecidos;1089;
+22/10/2021;Jaén;Curados;63391;
+22/10/2021;Málaga;Confirmados PDIA;155390;
+22/10/2021;Málaga;Aumento;60;
+22/10/2021;Málaga;Confirmados PDIA 14 días;665;
+22/10/2021;Málaga;Confirmados PDIA 7 días;301;
+22/10/2021;Málaga;Total confirmados ;157279;
+22/10/2021;Málaga;Hospitalizados;10499;
+22/10/2021;Málaga;Total UCI;1011;
+22/10/2021;Málaga;Fallecidos;1985;
+22/10/2021;Málaga;Curados;153592;
+22/10/2021;Sevilla;Confirmados PDIA;176639;
+22/10/2021;Sevilla;Aumento;40;
+22/10/2021;Sevilla;Confirmados PDIA 14 días;427;
+22/10/2021;Sevilla;Confirmados PDIA 7 días;205;
+22/10/2021;Sevilla;Total confirmados ;177471;
+22/10/2021;Sevilla;Hospitalizados;12878;
+22/10/2021;Sevilla;Total UCI;1253;
+22/10/2021;Sevilla;Fallecidos;2317;
+22/10/2021;Sevilla;Curados;173294;
 21/10/2021;Andalucía;Confirmados PDIA;806440;
 21/10/2021;Andalucía;Aumento;307;
 21/10/2021;Andalucía;Confirmados PDIA 14 días;2592;
@@ -46251,6 +46332,135 @@ Fecha;Territorio;Medida;Valor;
 26/02/2020;Sevilla;Fallecidos;0;
 26/02/2020;Sevilla;Curados;;
 
+          
+               
+                    
+               
+               
+                    
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+          
+          
+               
+                    
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+          
+          
+               
+                    
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+          
+          
+               
+                    
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+          
+          
+               
+                    
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+          
+          
+               
+                    
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+          
+          
+               
+                    
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+          
+          
+               
+                    
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+          
+          
+               
+                    
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+          
           
                
                     
