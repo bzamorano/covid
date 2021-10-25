@@ -57,7 +57,7 @@ get_date <- function(country){
                   start=list(A=-0.1, B=2.7e-8, C=4))
   }else if(country == "Portugal"  | country == "Spain"
            | country == "Mexico" | country == "Brazil"  | country == "France"
-           | country == "Italy"  | country == "Belgium" | country == "Canada"){
+           | country == "Belgium" | country == "Canada"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.3, B=2.7e-5, C=2.6))
   }else{
