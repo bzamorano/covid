@@ -288,15 +288,15 @@ dd%>%
          axis.text.y.left = element_text(color = "purple"),
          axis.title.y.left = element_text(color = "purple")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=220,
+  annotate("text", x=as.POSIXct("2020-08-01"), y=220,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=200, 
+  annotate("text", x=as.POSIXct("2020-07-15"), y=200, 
            label= paste("UCI 14 días:", FortnightUCIGRX), color = "purple") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=190,
+  annotate("text", x=as.POSIXct("2020-07-15"), y=190,
            label= paste("Total UCI:", TotUCIGRX), color = "purple") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=170, 
+  annotate("text", x=as.POSIXct("2020-08-01"), y=170, 
            label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2020-04-15"), y=160,
+  annotate("text", x=as.POSIXct("2020-08-01"), y=160,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "UCI 14 días")
 
