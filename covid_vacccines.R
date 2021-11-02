@@ -52,11 +52,11 @@ get_date <- function(country){
   if(country == "Israel"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A*log(B*(Days+C)), data = x, 
                   start=list(A=20, B=0.12, C=1.2))
-  }else if(country == "Japan" | country == "India"){
+  }else if(country == "India"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.1, B=2.7e-8, C=4))
   }else if(country == "Portugal" | country == "Mexico" | country == "Brazil"
-           | country == "Canada"){
+           | country == "Canada" | country == "Japan"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A + B*Days^C, data = x,
                   start=list(A=-0.3, B=2.7e-5, C=2.6))
   }else{
