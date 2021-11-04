@@ -47,7 +47,13 @@ get_date <- function(country){
       nmindays = nmindays +1
   }
   
-  f2 <- linearModel(formula = people_fully_vaccinated_per_hundred ~ Days + 1, data = x2)
+  ll <- lm(formula = people_fully_vaccinated_per_hundred ~ Days + 1, data = x2)
+  f2 <- makeFun(ll)
+  
+  slope <- ll$coefficients[[2]]
+  Dslope <- summary(ll)$coefficients[2,2]
+  error <- round(3*(80-max(x2$people_fully_vaccinated_per_hundred)) * Dslope / (slope * slope))
+  if(error < 1){error <- 1}
 
   if(country == "Israel"){
     f <- fitModel(people_fully_vaccinated_per_hundred ~ A*log(B*(Days+C)), data = x, 
@@ -96,13 +102,12 @@ get_date <- function(country){
   
   theMax <- max(x$people_fully_vaccinated_per_hundred, na.rm = TRUE)
   
-  print(paste("El 80% se obtiene en", country,"entre el", theDay,
-              "y el", theDay2))
+  print(paste("El 80% se obtiene en", country,"el", theDay2, "+/-", error))
   
-  return(list(p, f, theDay, theMax, f2, theDay2))
+  return(list(p, f, theDay, theMax, f2, theDay2, error))
 }
 
-dTime <- matrix(nrow = length(countries), ncol = 5)
+dTime <- matrix(nrow = length(countries), ncol = 6)
 
 for (country in countries) {
   plotAndFun <- get_date(country)
@@ -118,6 +123,7 @@ for (country in countries) {
   dTime[FirstNAindex, 3] <- 12 * log10(1 + populations[FirstNAindex]*10./max(populations) )
   dTime[FirstNAindex, 4] <- plotAndFun[[4]]
   dTime[FirstNAindex, 5] <- as.character(plotAndFun[[6]])
+  dTime[FirstNAindex, 6] <- plotAndFun[[7]]
   
   plot(plotAndFun[[1]])
   plot(plotFun(plotAndFun[[2]], col = "red", add = TRUE))
@@ -126,17 +132,19 @@ for (country in countries) {
 
 # Timeline
 dTime <- as.data.frame(dTime)
-names(dTime) <- c("Country", "Date", "Position", "Total", "DateMax")
+names(dTime) <- c("Country", "Date", "Position", "Total", "DateMax", "Error")
 
 dTime <- dTime[with(dTime, order(Date)), ]
 dTime$Date <- ymd(dTime$Date)
 dTime$DateMax <- ymd(dTime$DateMax)
 dTime$Position <- as.numeric(dTime$Position)
 dTime$Total <- as.numeric(dTime$Total)
+dTime$Error <- as.numeric(dTime$Error)
 
 #Fix Portugal
 dTime$Date[dTime$Country == "Portugal"] <- "2021-09-12"
 dTime$DateMax[dTime$Country == "Portugal"] <- "2021-09-12"
+dTime$Error[dTime$Country == "Portugal"] <- 0
 
 # Bar plot
 dTime %>%
@@ -239,10 +247,10 @@ data %>%
 dTime %>%
   ggplot(aes(col = Country, 
              y=rank(Position), 
-             x=as.Date(Date) + 0.5*(as.Date(DateMax)-as.Date(Date))))  +
+             x=as.Date(DateMax) ))  +
   geom_point(show.legend = FALSE) +
-  geom_errorbarh(aes(xmin = as.Date(Date), xmax = as.Date(DateMax)), show.legend = FALSE) +
-  geom_text(aes(x = as.Date(DateMax)+50+nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
+  geom_errorbarh(aes(xmin = as.Date(DateMax)-Error, xmax = as.Date(DateMax)+Error), show.legend = FALSE) +
+  geom_text(aes(x = as.Date(DateMax)+Error+50+nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
   labs(x = "Date", y = "Country)") +
   theme(axis.line.y=element_blank(),
         axis.text.y=element_blank(),
