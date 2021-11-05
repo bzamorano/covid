@@ -246,7 +246,7 @@ data %>%
 # X-wing chart
 dTime %>%
   ggplot(aes(col = Country, 
-             y=rank(Position), 
+             y=rank(DateMax), 
              x=as.Date(DateMax) ))  +
   geom_point(show.legend = FALSE) +
   geom_errorbarh(aes(xmin = as.Date(DateMax)-Error, xmax = as.Date(DateMax)+Error), show.legend = FALSE) +
