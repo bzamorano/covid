@@ -141,10 +141,13 @@ dTime$Position <- as.numeric(dTime$Position)
 dTime$Total <- as.numeric(dTime$Total)
 dTime$Error <- as.numeric(dTime$Error)
 
-#Fix Portugal
+#Fix Portugal & Spain
 dTime$Date[dTime$Country == "Portugal"] <- "2021-09-12"
 dTime$DateMax[dTime$Country == "Portugal"] <- "2021-09-12"
 dTime$Error[dTime$Country == "Portugal"] <- 0
+dTime$Date[dTime$Country == "Spain"] <- "2021-11-07"
+dTime$DateMax[dTime$Country == "Spain"] <- "2021-11-07"
+dTime$Error[dTime$Country == "Spain"] <- 0
 
 # Bar plot
 dTime %>%
