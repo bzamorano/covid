@@ -19,7 +19,8 @@ countries <- c("Israel", "United Kingdom", "United States", "Spain", "Mexico",
                "Cambodia", "South Korea", "Uruguay", "Turkey", "Iran",
                "Vietnam", "Russia", "Morocco", "China", "Switzerland", "Czechia",
                "Myanmar", "Colombia", "Argentina", "Ukraine", "Poland", "Austria",
-               "South Africa")
+               "South Africa", "Indonesia", "Pakistan", "Bangladesh",
+               "Philippines", "Egypt", "Ethiopia", "Nigeria")
 
 continents <- c("World", "European Union",
                "Asia", "Africa", "Europe", "North America", "South America", "Oceania")
@@ -50,8 +51,9 @@ get_date <- function(country){
     slice_tail(n = 7)
   
   nmindays <- 8
-  while(range(x2$people_fully_vaccinated_per_hundred)[2] - 
-        range(x2$people_fully_vaccinated_per_hundred)[1] < 1.0) {
+  while( (range(x2$people_fully_vaccinated_per_hundred)[2] - 
+        range(x2$people_fully_vaccinated_per_hundred)[1] < 1.0) & 
+        (nmindays <= sum(!is.na(x$people_fully_vaccinated_per_hundred))) ) {
     x2 <- x %>%
       filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
       slice_tail(n = nmindays)
@@ -150,9 +152,7 @@ dTime2$Position <- as.numeric(dTime2$Position)
 dTime2$Total <- as.numeric(dTime2$Total)
 dTime2$Error <- as.numeric(dTime2$Error)
 
-# Bar plot
-library(gganimate)
-
+# Bar plot for countries
 dTime %>%
   arrange(desc(Total)) %>%
   ggplot(aes(x = reorder(Country, Total), weight = Total)) +
@@ -169,7 +169,7 @@ dTime %>%
 ggsave("bars_countries.png")
 
 
-# Bar plot
+# Bar plot for continents
 dTime2 %>%
   arrange(desc(Total)) %>%
   ggplot(aes(x = reorder(Continent, Total), weight = Total)) +
@@ -195,6 +195,8 @@ data %>%
 LastDay <- max(data$date)
 
 dTime %>%
+  filter(Country != "Ethiopia") %>%
+  filter(Country != "Nigeria") %>%
   ggplot(aes(col = Country, 
              y=rank(Date, ties.method = "first"), 
              x=as.Date(Date) ))  +
