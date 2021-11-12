@@ -26,9 +26,9 @@ continents <- c("World", "European Union",
                "Asia", "Africa", "Europe", "North America", "South America", "Oceania")
 
 #Shrink data
-data2 <- data[data$location == countries,]
+data <- data[data$location %in% c(countries, continents),]
 
-population <- data2 %>% 
+population <- data %>% 
   group_by(location) %>%
   summarise(population = last(population))
 
