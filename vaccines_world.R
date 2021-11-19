@@ -186,10 +186,10 @@ ggsave("bars_continents.png")
 
 # Print the last data entry for Spain
 print("Last data entry for Spain:")
-data %>%
+print(data %>%
   filter(location == "Spain") %>%
   filter(!is.na(people_fully_vaccinated_per_hundred)) %>%
-  summarise(LastDay = max(date), Total_vacc = max(people_fully_vaccinated_per_hundred))
+  summarise(LastDay = max(date), Total_vacc = max(people_fully_vaccinated_per_hundred)))
 
 # X-wing chart
 LastDay <- max(data$date)
