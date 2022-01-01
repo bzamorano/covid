@@ -8,6 +8,22 @@ theme_set(theme_minimal())
 
 data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 
+data %>%
+  group_by(location) %>%
+  filter(continent != "") %>%
+  summarise(mortality = sum(new_deaths[(length(new_deaths)-13):length(new_deaths)], 
+                            na.rm = TRUE)*100. / 
+              sum(new_cases[(length(new_cases)-13):length(new_cases)], na.rm = TRUE),
+            vaccination = max(people_fully_vaccinated_per_hundred, na.rm = TRUE)) %>%
+  filter(vaccination > 5) %>%
+  filter(mortality < 10) %>%
+  filter(mortality > 0) %>%
+  ggplot(aes(x = vaccination, y = mortality)) +
+  geom_point(show.legend = FALSE) +
+  labs(x = "People fully vaccinated (%)", y = "14 days mortality rate") +
+  geom_lm() +
+  ggsave("mortality_vs_vaccines.png")
+
 #Fix dates
 data$date <- as.POSIXct(strptime(data$date, "%Y-%m-%d"))
 data$total_cases <- as.numeric(data$total_cases)
@@ -235,3 +251,4 @@ dTime2 %>%
   annotate("text", x=as.Date("2025-01-01"), y=1.5, label= "Model by Bruno Zamorano") +
   annotate("text", x=as.Date("2025-01-01"), y=1, label= "Data taken from https://ourworldindata.org") +
 ggsave("xwing_continents.png")
+
