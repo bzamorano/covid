@@ -53,6 +53,18 @@ for (prov in provincias) {
     min_index <- min(i+7, n_rows)
     min_index2 <- min(i+14, n_rows)
     
+    # correct for missing days
+    diff_days <- as.integer(dt$Fecha[i] - dt$Fecha[min_index2])
+    while (diff_days > 14) {
+      min_index2 <- min_index2 -1
+      diff_days <- as.integer(dt$Fecha[i] - dt$Fecha[min_index2])
+    }
+    diff_days <- as.integer(dt$Fecha[i] - dt$Fecha[min_index])
+    while (diff_days > 7) {
+      min_index <- min_index -1
+      diff_days <- as.integer(dt$Fecha[i] - dt$Fecha[min_index])
+    }
+    
     weeknew[irows[i]] <- dt$Confirmados[i] - dt$Confirmados[min_index]
     fortnightnew[irows[i]] <- dt$Confirmados[i] - dt$Confirmados[min_index2]
     weekUCI[irows[i]] <- dt$UCI[i] - dt$UCI[min_index]
@@ -184,9 +196,9 @@ dd%>%
   geom_line(size = 1.25) +
   labs(x = "Fecha", y = "Incidencia acumulada") +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
-  annotate("text", x=as.POSIXct("2021-04-01"), y=1500, label= LastDay) +
-  annotate("text", x=as.POSIXct("2021-04-01"), y=1400, label= paste("Andalucía:", round(IncTot))) +
-  annotate("text", x=as.POSIXct("2021-04-01"), y=1300, label= paste("Granada:", round(IncGRX)))
+  annotate("text", x=as.POSIXct("2021-01-15"), y=2000, label= LastDay) +
+  annotate("text", x=as.POSIXct("2021-01-15"), y=1850, label= paste("Andalucía:", round(IncTot))) +
+  annotate("text", x=as.POSIXct("2021-01-15"), y=1700, label= paste("Granada:", round(IncGRX)))
 
 #Summary for GRX
 dd%>%
@@ -232,15 +244,15 @@ dd%>%
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=15000,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=15500,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=14000, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=14500, 
            label= paste("Casos 14 días:", FortnightCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=13000,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=13500,
            label= paste("Total casos:", TotCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=11500, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=12000, 
            label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=10500,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=11000,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 14 días")
 
