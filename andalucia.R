@@ -216,15 +216,15 @@ dd%>%
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=7900,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=8500,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=7400, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=8000, 
            label= paste("Casos 7 días:", WeekCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=6900,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=7500,
            label= paste("Total casos:", TotCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=6200, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=6800, 
            label= paste("Fallecidos 7 días:", WeekDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=5700,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=6300,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 7 días")
 
@@ -244,15 +244,15 @@ dd%>%
          axis.text.y.left = element_text(color = "blue"),
          axis.title.y.left = element_text(color = "blue")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=15500,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=18500,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=14500, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=17500, 
            label= paste("Casos 14 días:", FortnightCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=13500,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=16500,
            label= paste("Total casos:", TotCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=12000, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=15000, 
            label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=11000,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=14000,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 14 días")
 
@@ -272,15 +272,15 @@ dd%>%
          axis.text.y.left = element_text(color = "darkgreen"),
          axis.title.y.left = element_text(color = "darkgreen")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
-  annotate("text", x=as.POSIXct("2020-08-01"), y=850,
+  annotate("text", x=as.POSIXct("2020-06-15"), y=850,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2020-08-01"), y=800, 
+  annotate("text", x=as.POSIXct("2020-06-15"), y=800, 
            label= paste("Hospitalizados 14 días:", FortnightHospGRX), color = "darkgreen") +
-  annotate("text", x=as.POSIXct("2020-08-01"), y=760,
+  annotate("text", x=as.POSIXct("2020-06-15"), y=760,
            label= paste("Total hospital:", TotHospGRX), color = "darkgreen") +
-  annotate("text", x=as.POSIXct("2020-07-15"), y=700, 
+  annotate("text", x=as.POSIXct("2020-06-01"), y=720, 
            label= paste("UCI 14 días:", FortnightUCIGRX), color = "purple") +
-  annotate("text", x=as.POSIXct("2020-07-15"), y=660,
+  annotate("text", x=as.POSIXct("2020-06-01"), y=680,
            label= paste("Total UCI:", TotUCIGRX), color = "purple") +
   labs(x = "Fecha", y = "Hospitalizados 14 días")
 
@@ -300,15 +300,15 @@ dd%>%
          axis.text.y.left = element_text(color = "purple"),
          axis.title.y.left = element_text(color = "purple")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
-  annotate("text", x=as.POSIXct("2020-08-01"), y=220,
+  annotate("text", x=as.POSIXct("2020-06-15"), y=220,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2020-07-15"), y=200, 
+  annotate("text", x=as.POSIXct("2020-06-01"), y=210, 
            label= paste("UCI 14 días:", FortnightUCIGRX), color = "purple") +
-  annotate("text", x=as.POSIXct("2020-07-15"), y=190,
+  annotate("text", x=as.POSIXct("2020-06-01"), y=200,
            label= paste("Total UCI:", TotUCIGRX), color = "purple") +
-  annotate("text", x=as.POSIXct("2020-08-01"), y=170, 
+  annotate("text", x=as.POSIXct("2020-06-15"), y=190, 
            label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2020-08-01"), y=160,
+  annotate("text", x=as.POSIXct("2020-06-15"), y=180,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "UCI 14 días")
 
