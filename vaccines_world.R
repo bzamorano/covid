@@ -36,7 +36,7 @@ countries <- c("Israel", "United Kingdom", "United States", "Spain", "Mexico",
                "Vietnam", "Russia", "Morocco", "China", "Switzerland", "Czechia",
                "Myanmar", "Colombia", "Argentina", "Ukraine", "Poland", "Austria",
                "South Africa", "Indonesia", "Pakistan", "Bangladesh",
-               "Philippines", "Egypt", "Ethiopia", "Nigeria")
+               "Philippines", "Australia", "Egypt", "Ethiopia", "Nigeria")
 
 continents <- c("World", "European Union",
                "Asia", "Africa", "Europe", "North America", "South America", "Oceania")
@@ -218,7 +218,7 @@ dTime %>%
              x=as.Date(Date) ))  +
   geom_point(show.legend = FALSE) +
   geom_errorbarh(aes(xmin = as.Date(Date)-Error, xmax = as.Date(Date)+Error), show.legend = FALSE) +
-  geom_text(aes(x = as.Date(Date)+Error+150+5*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
+  geom_text(aes(x = as.Date(Date)+Error+100+6*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
   labs(x = "Date", y = "Country)") +
   theme(axis.line.y=element_blank(),
         axis.text.y=element_blank(),
