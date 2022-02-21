@@ -316,6 +316,16 @@ dd%>%
 dd%>%
   filter(Provincia == "Granada" & Fecha > "2020-04-01") %>%
   ggplot(aes(x = Fecha)) +
+  geom_line(aes(y = (Fallecidos/Confirmados)), colour = "brown", size = 1) + 
+  scale_y_continuous(labels = scales::percent) +
+  geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
+  geom_hline(yintercept = 0.012, col = "darkblue", size = 1.25) +
+  labs(x = "Fecha", y = "Fallecidos / Confirmados")
+
+# Evolucion mortalidad
+dd%>%
+  filter(Provincia == "Granada" & Fecha > "2020-04-01") %>%
+  ggplot(aes(x = Fecha)) +
   geom_line(aes(y = (Fallecidos/Hospitalizados)), colour = "brown", size = 1) + 
   scale_y_continuous(labels = scales::percent) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
