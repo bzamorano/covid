@@ -36,7 +36,9 @@ countries <- c("Israel", "United Kingdom", "United States", "Spain", "Mexico",
                "Vietnam", "Russia", "Morocco", "China", "Switzerland", "Czechia",
                "Myanmar", "Colombia", "Argentina", "Ukraine", "Poland", "Austria",
                "South Africa", "Indonesia", "Pakistan", "Bangladesh",
-               "Philippines", "Australia", "Egypt", "Ethiopia", "Nigeria")
+#               "Philippines", "Australia", "Egypt", "Ethiopia", "Nigeria")
+# there's some bug with Ethiopia today (2022-03-04)
+"Philippines", "Australia", "Egypt", "Nigeria")
 
 continents <- c("World", "European Union",
                "Asia", "Africa", "Europe", "North America", "South America", "Oceania")
