@@ -11,6 +11,8 @@ data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 data %>%
   group_by(location) %>%
   filter(continent != "") %>%
+  filter(location != "Western Sahara") %>%
+  # some issue with Western Sahara
   summarise(mortality = sum(new_deaths[(length(new_deaths)-13):length(new_deaths)], 
                             na.rm = TRUE)*100. / 
               sum(new_cases[(length(new_cases)-13):length(new_cases)], na.rm = TRUE),
@@ -36,9 +38,7 @@ countries <- c("Israel", "United Kingdom", "United States", "Spain", "Mexico",
                "Vietnam", "Russia", "Morocco", "China", "Switzerland", "Czechia",
                "Myanmar", "Colombia", "Argentina", "Ukraine", "Poland", "Austria",
                "South Africa", "Indonesia", "Pakistan", "Bangladesh",
-#               "Philippines", "Australia", "Egypt", "Ethiopia", "Nigeria")
-# there's some bug with Ethiopia today (2022-03-04)
-"Philippines", "Australia", "Egypt", "Nigeria")
+               "Philippines", "Australia", "Egypt", "Ethiopia", "Nigeria")
 
 continents <- c("World", "European Union",
                "Asia", "Africa", "Europe", "North America", "South America", "Oceania")
@@ -83,6 +83,7 @@ get_date <- function(country){
   
   slope <- ll$coefficients[[2]]
   Dslope <- summary(ll)$coefficients[2,2]
+  if(is.na(Dslope)){Dslope = slope}
   error <- round(3*(80-max(x2$people_fully_vaccinated_per_hundred)) * Dslope / (slope * slope))
   if(error < 1){error <- 1}
 
