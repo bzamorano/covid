@@ -11,8 +11,6 @@ data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 data %>%
   group_by(location) %>%
   filter(continent != "") %>%
-  filter(location != "Western Sahara") %>%
-  # some issue with Western Sahara
   summarise(mortality = sum(new_deaths[(length(new_deaths)-13):length(new_deaths)], 
                             na.rm = TRUE)*100. / 
               sum(new_cases[(length(new_cases)-13):length(new_cases)], na.rm = TRUE),
@@ -249,9 +247,9 @@ dTime2 %>%
         axis.title.y=element_blank(),
         axis.ticks.y=element_blank()) +
   geom_vline(xintercept = as.Date(LastDay), col = "red", size = 1) +
-  annotate("text", x=as.Date("2025-01-01"), y=2.5, label= "Predicted date for 80% population fully vaccinated") +
-  annotate("text", x=as.Date("2025-01-01"), y=2, label= paste("Using data up to", LastDay)) +
-  annotate("text", x=as.Date("2025-01-01"), y=1.5, label= "Model by Bruno Zamorano") +
-  annotate("text", x=as.Date("2025-01-01"), y=1, label= "Data taken from https://ourworldindata.org") +
+  annotate("text", x=as.Date("2024-01-01"), y=2.5, label= "Predicted date for 80% population fully vaccinated") +
+  annotate("text", x=as.Date("2024-01-01"), y=2, label= paste("Using data up to", LastDay)) +
+  annotate("text", x=as.Date("2024-01-01"), y=1.5, label= "Model by Bruno Zamorano") +
+  annotate("text", x=as.Date("2024-01-01"), y=1, label= "Data taken from https://ourworldindata.org") +
 ggsave("xwing_continents.png")
 
