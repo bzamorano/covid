@@ -126,22 +126,24 @@ data%>%
   filter(Territorio != "Andalucía" & Medida == "Total confirmados " ) %>%
   ggplot(aes(x=Fecha, y=Valor, colour=Territorio)) +
   geom_line(size = 1.25) +
-  scale_y_log10(labels = comma_format(big.mark = " ")) +
+#  scale_y_log10(labels = comma_format(big.mark = " ")) +
+  scale_y_continuous(labels = comma_format(big.mark = " ")) +
   labs(x = "Fecha", y = "Casos totales", col = "Provincia") +
-  annotate("text", x=LastDay-86400*75, y=300, label= LastDay) +
-  annotate("text", x=LastDay-86400*75, y=150, label= paste("Casos totales:", TotCases)) +
-  annotate("text", x=LastDay-86400*75, y=75, label= paste("Granada:", TotCasesGRX))
+  annotate("text", x=LastDay-86400*175, y=30000, label= LastDay) +
+  annotate("text", x=LastDay-86400*175, y=19000, label= paste("Casos totales:", TotCases)) +
+  annotate("text", x=LastDay-86400*175, y=7500, label= paste("Granada:", TotCasesGRX))
 
 # Fallecidos totales
 data%>%
   filter(Territorio != "Andalucía" & Medida == "Fallecidos" ) %>%
   ggplot(aes(x=Fecha, y=Valor, colour=Territorio)) +
   geom_line(size = 1.25) +
-  scale_y_log10(labels = comma_format(big.mark = " ")) +
+#  scale_y_log10(labels = comma_format(big.mark = " ")) +
+  scale_y_continuous(labels = comma_format(big.mark = " ")) +
   labs(x = "Fecha", y = "Fallecidos totales", col = "Provincia") +
-  annotate("text", x=LastDay-86400*75, y=27, label= LastDay) +
-  annotate("text", x=LastDay-86400*75, y=18, label= paste("Fallecidos totales:", TotDeaths)) +
-  annotate("text", x=LastDay-86400*75, y=12, label= paste("Granada:", TotDeathsGRX))
+  annotate("text", x=LastDay-86400*175, y=300, label= LastDay) +
+  annotate("text", x=LastDay-86400*175, y=180, label= paste("Fallecidos totales:", TotDeaths)) +
+  annotate("text", x=LastDay-86400*175, y=50, label= paste("Granada:", TotDeathsGRX))
 
 # Hospitalizados totales
 data%>%
