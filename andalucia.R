@@ -199,9 +199,10 @@ dd%>%
   labs(x = "Fecha", y = "Incidencia acumulada") +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   geom_vline(xintercept = as.POSIXct("2022-03-27"), col = "pink", size = 1.25) +
-  annotate("text", x=as.POSIXct("2021-01-15"), y=2000, label= LastDay) +
-  annotate("text", x=as.POSIXct("2021-01-15"), y=1850, label= paste("Andalucía:", round(IncTot))) +
-  annotate("text", x=as.POSIXct("2021-01-15"), y=1700, label= paste("Granada:", round(IncGRX)))
+  geom_vline(xintercept = as.POSIXct("2022-04-20"), col = "cyan", size = 1.25) +
+  annotate("text", x=as.POSIXct("2021-01-15"), y=2500, label= LastDay) +
+  annotate("text", x=as.POSIXct("2021-01-15"), y=2350, label= paste("Andalucía:", round(IncTot))) +
+  annotate("text", x=as.POSIXct("2021-01-15"), y=2200, label= paste("Granada:", round(IncGRX)))
 
 #Summary for GRX
 dd%>%
@@ -220,15 +221,16 @@ dd%>%
          axis.title.y.left = element_text(color = "blue")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   geom_vline(xintercept = as.POSIXct("2022-03-27"), col = "pink", size = 1.25) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=8500,
+  geom_vline(xintercept = as.POSIXct("2022-04-20"), col = "cyan", size = 1.25) +
+  annotate("text", x=as.POSIXct("2021-01-25"), y=11500,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=8000, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=11000, 
            label= paste("Casos 7 días:", WeekCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=7500,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=10500,
            label= paste("Total casos:", TotCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=6800, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=9800, 
            label= paste("Fallecidos 7 días:", WeekDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=6300,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=9300,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 7 días")
 
@@ -249,15 +251,16 @@ dd%>%
          axis.title.y.left = element_text(color = "blue")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   geom_vline(xintercept = as.POSIXct("2022-03-27"), col = "pink", size = 1.25) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=18500,
+  geom_vline(xintercept = as.POSIXct("2022-04-20"), col = "cyan", size = 1.25) +
+  annotate("text", x=as.POSIXct("2021-01-25"), y=19500,
            label = paste("Granada", LastDay)) +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=17500, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=18500, 
            label= paste("Casos 14 días:", FortnightCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=16500,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=17500,
            label= paste("Total casos:", TotCasesGRX), color = "blue") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=15000, 
+  annotate("text", x=as.POSIXct("2021-01-25"), y=16000, 
            label= paste("Fallecidos 14 días:", FortnightDeathsGRX), color = "red") +
-  annotate("text", x=as.POSIXct("2021-01-25"), y=14000,
+  annotate("text", x=as.POSIXct("2021-01-25"), y=15000,
            label= paste("Total fallecidos:", TotDeathsGRX), color = "red") +
   labs(x = "Fecha", y = "Confirmados 14 días")
 
@@ -278,6 +281,7 @@ dd%>%
          axis.title.y.left = element_text(color = "darkgreen")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   geom_vline(xintercept = as.POSIXct("2022-03-27"), col = "pink", size = 1.25) +
+  geom_vline(xintercept = as.POSIXct("2022-04-20"), col = "cyan", size = 1.25) +
   annotate("text", x=as.POSIXct("2020-06-15"), y=850,
            label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-06-15"), y=800, 
@@ -307,6 +311,7 @@ dd%>%
          axis.title.y.left = element_text(color = "purple")) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   geom_vline(xintercept = as.POSIXct("2022-03-27"), col = "pink", size = 1.25) +
+  geom_vline(xintercept = as.POSIXct("2022-04-20"), col = "cyan", size = 1.25) +
   annotate("text", x=as.POSIXct("2020-06-15"), y=220,
            label = paste("Granada", LastDay)) +
   annotate("text", x=as.POSIXct("2020-06-01"), y=210, 
@@ -327,7 +332,12 @@ dd%>%
   scale_y_continuous(labels = scales::percent) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   geom_vline(xintercept = as.POSIXct("2022-03-27"), col = "pink", size = 1.25) +
+  geom_vline(xintercept = as.POSIXct("2022-04-20"), col = "cyan", size = 1.25) +
   geom_hline(yintercept = 0.012, col = "darkblue", size = 1.25) +
+  annotate("text", x=as.POSIXct("2021-10-15"), y=0.08,
+           label = "Mortalidad comparada con") +
+  annotate("text", x=as.POSIXct("2021-10-15"), y=0.075,
+           label = "promedio gripe") +
   labs(x = "Fecha", y = "Fallecidos / Confirmados")
 
 # Evolucion mortalidad
@@ -338,4 +348,5 @@ dd%>%
   scale_y_continuous(labels = scales::percent) +
   geom_vline(xintercept = as.POSIXct("2021-05-09"), col = "green", size = 1.25) +
   geom_vline(xintercept = as.POSIXct("2022-03-27"), col = "pink", size = 1.25) +
+  geom_vline(xintercept = as.POSIXct("2022-04-20"), col = "cyan", size = 1.25) +
   labs(x = "Fecha", y = "Fallecidos / Hospitalizados")

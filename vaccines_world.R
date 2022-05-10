@@ -11,6 +11,7 @@ data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 data %>%
   group_by(location) %>%
   filter(continent != "") %>%
+  filter(location != "Western Sahara") %>%
   summarise(mortality = sum(new_deaths[(length(new_deaths)-13):length(new_deaths)], 
                             na.rm = TRUE)*100. / 
               sum(new_cases[(length(new_cases)-13):length(new_cases)], na.rm = TRUE),
@@ -219,7 +220,7 @@ dTime %>%
              x=as.Date(Date) ))  +
   geom_point(show.legend = FALSE) +
   geom_errorbarh(aes(xmin = as.Date(Date)-Error, xmax = as.Date(Date)+Error), show.legend = FALSE) +
-  geom_text(aes(x = as.Date(Date)+Error+100+6*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
+  geom_text(aes(x = as.Date(Date)+Error+120+12*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
   labs(x = "Date", y = "Country)") +
   theme(axis.line.y=element_blank(),
         axis.text.y=element_blank(),
@@ -227,10 +228,10 @@ dTime %>%
         axis.title.y=element_blank(),
         axis.ticks.y=element_blank()) +
   geom_vline(xintercept = as.Date(LastDay), col = "red", size = 1) +
-  annotate("text", x=as.Date("2025-01-01"), y=9, label= "Predicted date for 80% population fully vaccinated") +
-  annotate("text", x=as.Date("2025-01-01"), y=7.75, label= paste("Using data up to", LastDay)) +
-  annotate("text", x=as.Date("2025-01-01"), y=6.5, label= "Model by Bruno Zamorano") +
-  annotate("text", x=as.Date("2025-01-01"), y=5.25, label= "Data taken from https://ourworldindata.org") +
+  annotate("text", x=as.Date("2027-01-01"), y=9, label= "Predicted date for 80% population fully vaccinated") +
+  annotate("text", x=as.Date("2027-01-01"), y=7.75, label= paste("Using data up to", LastDay)) +
+  annotate("text", x=as.Date("2027-01-01"), y=6.5, label= "Model by Bruno Zamorano") +
+  annotate("text", x=as.Date("2027-01-01"), y=5.25, label= "Data taken from https://ourworldindata.org") +
 ggsave("xwing_countries.png")
 
 dTime2 %>%
@@ -247,9 +248,9 @@ dTime2 %>%
         axis.title.y=element_blank(),
         axis.ticks.y=element_blank()) +
   geom_vline(xintercept = as.Date(LastDay), col = "red", size = 1) +
-  annotate("text", x=as.Date("2026-01-01"), y=2.5, label= "Predicted date for 80% population fully vaccinated") +
-  annotate("text", x=as.Date("2026-01-01"), y=2, label= paste("Using data up to", LastDay)) +
-  annotate("text", x=as.Date("2026-01-01"), y=1.5, label= "Model by Bruno Zamorano") +
-  annotate("text", x=as.Date("2026-01-01"), y=1, label= "Data taken from https://ourworldindata.org") +
+  annotate("text", x=as.Date("2027-01-01"), y=2.5, label= "Predicted date for 80% population fully vaccinated") +
+  annotate("text", x=as.Date("2027-01-01"), y=2, label= paste("Using data up to", LastDay)) +
+  annotate("text", x=as.Date("2027-01-01"), y=1.5, label= "Model by Bruno Zamorano") +
+  annotate("text", x=as.Date("2027-01-01"), y=1, label= "Data taken from https://ourworldindata.org") +
 ggsave("xwing_continents.png")
 
