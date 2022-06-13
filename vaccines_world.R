@@ -1,10 +1,12 @@
 library(tidyverse)
 library(scales)
-library(mosaic)
+#library(mosaic)
 library(lubridate)
 
 #Change default colours
 theme_set(theme_minimal())
+theme_update(plot.background = element_rect(fill = "white"))
+theme_update(panel.background = element_rect(fill = "white"))
 
 data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
 
@@ -22,8 +24,8 @@ data %>%
   ggplot(aes(x = vaccination, y = mortality)) +
   geom_point(show.legend = FALSE) +
   labs(x = "People fully vaccinated (%)", y = "14 days mortality rate") +
-  geom_lm() +
-  ggsave("mortality_vs_vaccines.png")
+  geom_lm()
+ggsave(filename = "mortality_vs_vaccines.png", device = "png")
 
 #Fix dates
 data$date <- as.POSIXct(strptime(data$date, "%Y-%m-%d"))
@@ -231,7 +233,7 @@ dTime %>%
   annotate("text", x=as.Date("2027-01-01"), y=9, label= "Predicted date for 80% population fully vaccinated") +
   annotate("text", x=as.Date("2027-01-01"), y=7.75, label= paste("Using data up to", LastDay)) +
   annotate("text", x=as.Date("2027-01-01"), y=6.5, label= "Model by Bruno Zamorano") +
-  annotate("text", x=as.Date("2027-01-01"), y=5.25, label= "Data taken from https://ourworldindata.org") +
+  annotate("text", x=as.Date("2027-01-01"), y=5.25, label= "Data taken from https://ourworldindata.org")
 ggsave("xwing_countries.png")
 
 dTime2 %>%
@@ -251,6 +253,6 @@ dTime2 %>%
   annotate("text", x=as.Date("2027-01-01"), y=2.5, label= "Predicted date for 80% population fully vaccinated") +
   annotate("text", x=as.Date("2027-01-01"), y=2, label= paste("Using data up to", LastDay)) +
   annotate("text", x=as.Date("2027-01-01"), y=1.5, label= "Model by Bruno Zamorano") +
-  annotate("text", x=as.Date("2027-01-01"), y=1, label= "Data taken from https://ourworldindata.org") +
+  annotate("text", x=as.Date("2027-01-01"), y=1, label= "Data taken from https://ourworldindata.org")
 ggsave("xwing_continents.png")
 
