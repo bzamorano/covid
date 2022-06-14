@@ -1,14 +1,15 @@
 library(tidyverse)
 library(scales)
-#library(mosaic)
+library(mosaic)
 library(lubridate)
 
 #Change default colours
 theme_set(theme_minimal())
-theme_update(plot.background = element_rect(fill = "white"))
-theme_update(panel.background = element_rect(fill = "white"))
+theme_update(plot.background = element_rect(fill = "white", colour = NA))
+theme_update(panel.background = element_rect(fill = "white", colour = NA))
 
-data <- read.csv("~/Work/covid/owid-covid-data.csv", sep=",", header = TRUE)
+#Read data online
+data <- read.csv('https://covid.ourworldindata.org/data/owid-covid-data.csv', sep=",", header = TRUE)
 
 data %>%
   group_by(location) %>%
