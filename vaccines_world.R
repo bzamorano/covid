@@ -223,7 +223,7 @@ dTime %>%
              x=as.Date(Date) ))  +
   geom_point(show.legend = FALSE) +
   geom_errorbarh(aes(xmin = as.Date(Date)-Error, xmax = as.Date(Date)+Error), show.legend = FALSE) +
-  geom_text(aes(x = as.Date(Date)+Error+120+12*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
+  geom_text(aes(x = as.Date(Date)+Error+150+15*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
   labs(x = "Date", y = "Country)") +
   theme(axis.line.y=element_blank(),
         axis.text.y=element_blank(),
