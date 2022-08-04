@@ -223,7 +223,7 @@ dTime %>%
              x=as.Date(Date) ))  +
   geom_point(show.legend = FALSE) +
   geom_errorbarh(aes(xmin = as.Date(Date)-Error, xmax = as.Date(Date)+Error), show.legend = FALSE) +
-  geom_text(aes(x = as.Date(Date)+Error+150+15*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
+  geom_text(aes(x = as.Date(Date)+Error+250+25*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
   labs(x = "Date", y = "Country)") +
   theme(axis.line.y=element_blank(),
         axis.text.y=element_blank(),
@@ -231,10 +231,10 @@ dTime %>%
         axis.title.y=element_blank(),
         axis.ticks.y=element_blank()) +
   geom_vline(xintercept = as.Date(LastDay), col = "red", size = 1) +
-  annotate("text", x=as.Date("2027-01-01"), y=9, label= "Predicted date for 80% population fully vaccinated") +
-  annotate("text", x=as.Date("2027-01-01"), y=7.75, label= paste("Using data up to", LastDay)) +
-  annotate("text", x=as.Date("2027-01-01"), y=6.5, label= "Model by Bruno Zamorano") +
-  annotate("text", x=as.Date("2027-01-01"), y=5.25, label= "Data taken from https://ourworldindata.org")
+  annotate("text", x=as.Date("2032-01-01"), y=9, label= "Predicted date for 80% population fully vaccinated") +
+  annotate("text", x=as.Date("2032-01-01"), y=7.75, label= paste("Using data up to", LastDay)) +
+  annotate("text", x=as.Date("2032-01-01"), y=6.5, label= "Model by Bruno Zamorano") +
+  annotate("text", x=as.Date("2032-01-01"), y=5.25, label= "Data taken from https://ourworldindata.org")
 ggsave("xwing_countries.png")
 
 dTime2 %>%
