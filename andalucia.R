@@ -54,25 +54,26 @@ for (prov in provincias) {
     min_index2 <- min(i+14, n_rows)
     
     # correct for missing days
-    diff_days <- as.integer(dt$Fecha[i] - dt$Fecha[min_index2])
-    while (diff_days > 14) {
+    diff_days14 <- as.integer(dt$Fecha[i] - dt$Fecha[min_index2])
+    while (diff_days14 > 14) {
       min_index2 <- min_index2 -1
-      diff_days <- as.integer(dt$Fecha[i] - dt$Fecha[min_index2])
+      diff_days14 <- as.integer(dt$Fecha[i] - dt$Fecha[min_index2])
     }
-    diff_days <- as.integer(dt$Fecha[i] - dt$Fecha[min_index])
-    while (diff_days > 7) {
+    diff_days7 <- as.integer(dt$Fecha[i] - dt$Fecha[min_index])
+    while (diff_days7 > 7) {
       min_index <- min_index -1
-      diff_days <- as.integer(dt$Fecha[i] - dt$Fecha[min_index])
+      diff_days7 <- as.integer(dt$Fecha[i] - dt$Fecha[min_index])
     }
     
-    weeknew[irows[i]] <- dt$Confirmados[i] - dt$Confirmados[min_index]
-    fortnightnew[irows[i]] <- dt$Confirmados[i] - dt$Confirmados[min_index2]
-    weekUCI[irows[i]] <- dt$UCI[i] - dt$UCI[min_index]
-    fortnightUCI[irows[i]] <- dt$UCI[i] - dt$UCI[min_index2]
-    weekdeath[irows[i]] <- dt$Fallecidos[i] - dt$Fallecidos[min_index]
-    fortnightdeath[irows[i]] <- dt$Fallecidos[i] - dt$Fallecidos[min_index2]
-    weekhosp[irows[i]] <- dt$Hospitalizados[i] - dt$Hospitalizados[min_index]
-    fortnighthosp[irows[i]] <- dt$Hospitalizados[i] - dt$Hospitalizados[min_index2]
+    weeknew[irows[i]] <- (dt$Confirmados[i] - dt$Confirmados[min_index])*7./diff_days7
+    fortnightnew[irows[i]] <- (dt$Confirmados[i] - dt$Confirmados[min_index2])*14./diff_days14
+    weekUCI[irows[i]] <- (dt$UCI[i] - dt$UCI[min_index])*7./diff_days7
+    fortnightUCI[irows[i]] <- (dt$UCI[i] - dt$UCI[min_index2])*14./diff_days14
+    weekdeath[irows[i]] <- (dt$Fallecidos[i] - dt$Fallecidos[min_index])*7./diff_days7
+    fortnightdeath[irows[i]] <- (dt$Fallecidos[i] - dt$Fallecidos[min_index2])*14./diff_days14
+    weekhosp[irows[i]] <- (dt$Hospitalizados[i] - dt$Hospitalizados[min_index])*7./diff_days7
+    fortnighthosp[irows[i]] <- 
+      (dt$Hospitalizados[i] - dt$Hospitalizados[min_index2])*14./diff_days14
   }
 }
 
