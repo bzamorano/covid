@@ -86,7 +86,7 @@ get_date <- function(country){
   slope <- ll$coefficients[[2]]
   Dslope <- summary(ll)$coefficients[2,2]
   if(is.na(Dslope)){Dslope = slope}
-  error <- round(3*(80-max(x2$people_fully_vaccinated_per_hundred)) * Dslope / (slope * slope))
+  error <- round(3*(75-max(x2$people_fully_vaccinated_per_hundred)) * Dslope / (slope * slope))
   if(error < 1){error <- 1}
 
   p <- plotPoints(people_fully_vaccinated_per_hundred ~ Days, data = x, 
@@ -94,10 +94,10 @@ get_date <- function(country){
              ylab="People fully vaccinated (%)",
              main=country)
 
-  #Predecimos fecha para el 80% de vacunación:
+  #Predecimos fecha para el 75% de vacunación:
   tv <- 0
   i2 <- 0
-  while (tv < 80) {
+  while (tv < 75) {
     i2 <- i2+1
     tv <- f2(i2)
     if (is.na(tv)) {
@@ -109,13 +109,13 @@ get_date <- function(country){
   
   theMax <- max(x$people_fully_vaccinated_per_hundred, na.rm = TRUE)
   
-  if(theMax >= 80){
+  if(theMax >= 75){
     theDay <- as.Date("2021-01-01") + 
-      min(x[x$people_fully_vaccinated_per_hundred >= 80,]$Days, na.rm = TRUE)
+      min(x[x$people_fully_vaccinated_per_hundred >= 75,]$Days, na.rm = TRUE)
     error <- 0
   }
   
-  print(paste("80% reached in", country,"on", theDay, "+/-", error))
+  print(paste("75% reached in", country,"on", theDay, "+/-", error))
   
   return(list(p, theDay, theMax, f2, error))
 }
@@ -231,7 +231,7 @@ dTime %>%
         axis.title.y=element_blank(),
         axis.ticks.y=element_blank()) +
   geom_vline(xintercept = as.Date(LastDay), col = "red", size = 1) +
-  annotate("text", x=as.Date("2032-01-01"), y=9, label= "Predicted date for 80% population fully vaccinated") +
+  annotate("text", x=as.Date("2032-01-01"), y=9, label= "Predicted date for 75% population fully vaccinated") +
   annotate("text", x=as.Date("2032-01-01"), y=7.75, label= paste("Using data up to", LastDay)) +
   annotate("text", x=as.Date("2032-01-01"), y=6.5, label= "Model by Bruno Zamorano") +
   annotate("text", x=as.Date("2032-01-01"), y=5.25, label= "Data taken from https://ourworldindata.org")
@@ -251,7 +251,7 @@ dTime2 %>%
         axis.title.y=element_blank(),
         axis.ticks.y=element_blank()) +
   geom_vline(xintercept = as.Date(LastDay), col = "red", size = 1) +
-  annotate("text", x=as.Date("2027-01-01"), y=2.5, label= "Predicted date for 80% population fully vaccinated") +
+  annotate("text", x=as.Date("2027-01-01"), y=2.5, label= "Predicted date for 75% population fully vaccinated") +
   annotate("text", x=as.Date("2027-01-01"), y=2, label= paste("Using data up to", LastDay)) +
   annotate("text", x=as.Date("2027-01-01"), y=1.5, label= "Model by Bruno Zamorano") +
   annotate("text", x=as.Date("2027-01-01"), y=1, label= "Data taken from https://ourworldindata.org")
