@@ -178,7 +178,7 @@ dTime %>%
   arrange(desc(Total)) %>%
   ggplot(aes(x = reorder(Country, Total), weight = Total)) +
   geom_bar(aes(fill = Total)) +
-  geom_text(aes(x = reorder(Country, Total), y = as.numeric(Total) +3,
+  geom_text(aes(x = reorder(Country, Total), y = as.numeric(Total) +4,
                             label = paste0(round(Total, digits = 1), "%"),
                             col = "darkred"), 
             size=3, show.legend = FALSE) +
@@ -216,14 +216,14 @@ print(data %>%
 LastDay <- max(data$date)
 
 dTime %>%
-  filter(Country != "Ethiopia") %>%
-  filter(Country != "Nigeria") %>%
+#  filter(Country != "Ethiopia") %>%
+#  filter(Country != "Nigeria") %>%
   ggplot(aes(col = Country, 
              y=rank(Date, ties.method = "first"), 
              x=as.Date(Date) ))  +
   geom_point(show.legend = FALSE) +
   geom_errorbarh(aes(xmin = as.Date(Date)-Error, xmax = as.Date(Date)+Error), show.legend = FALSE) +
-  geom_text(aes(x = as.Date(Date)+Error+250+25*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
+  geom_text(aes(x = as.Date(Date)+Error+350+40*nchar(Country), label=paste0(Country)), show.legend = FALSE ) +
   labs(x = "Date", y = "Country)") +
   theme(axis.line.y=element_blank(),
         axis.text.y=element_blank(),
@@ -231,10 +231,10 @@ dTime %>%
         axis.title.y=element_blank(),
         axis.ticks.y=element_blank()) +
   geom_vline(xintercept = as.Date(LastDay), col = "red", size = 1) +
-  annotate("text", x=as.Date("2032-01-01"), y=9, label= "Predicted date for 75% population fully vaccinated") +
-  annotate("text", x=as.Date("2032-01-01"), y=7.75, label= paste("Using data up to", LastDay)) +
-  annotate("text", x=as.Date("2032-01-01"), y=6.5, label= "Model by Bruno Zamorano") +
-  annotate("text", x=as.Date("2032-01-01"), y=5.25, label= "Data taken from https://ourworldindata.org")
+  annotate("text", x=as.Date("2040-01-01"), y=9, label= "Predicted date for 75% population fully vaccinated") +
+  annotate("text", x=as.Date("2040-01-01"), y=7.75, label= paste("Using data up to", LastDay)) +
+  annotate("text", x=as.Date("2040-01-01"), y=6.5, label= "Model by Bruno Zamorano") +
+  annotate("text", x=as.Date("2040-01-01"), y=5.25, label= "Data taken from https://ourworldindata.org")
 ggsave("xwing_countries.png")
 
 dTime2 %>%
@@ -243,7 +243,7 @@ dTime2 %>%
              x=as.Date(Date) ))  +
   geom_point(show.legend = FALSE) +
   geom_errorbarh(aes(xmin = as.Date(Date)-Error, xmax = as.Date(Date)+Error), show.legend = FALSE) +
-  geom_text(aes(x = as.Date(Date)+Error+70+7*nchar(Continent), label=paste0(Continent)), show.legend = FALSE ) +
+  geom_text(aes(x = as.Date(Date)+Error+150+25*nchar(Continent), label=paste0(Continent)), show.legend = FALSE ) +
   labs(x = "Date", y = "Continent)") +
   theme(axis.line.y=element_blank(),
         axis.text.y=element_blank(),
@@ -251,9 +251,9 @@ dTime2 %>%
         axis.title.y=element_blank(),
         axis.ticks.y=element_blank()) +
   geom_vline(xintercept = as.Date(LastDay), col = "red", size = 1) +
-  annotate("text", x=as.Date("2027-01-01"), y=2.5, label= "Predicted date for 75% population fully vaccinated") +
-  annotate("text", x=as.Date("2027-01-01"), y=2, label= paste("Using data up to", LastDay)) +
-  annotate("text", x=as.Date("2027-01-01"), y=1.5, label= "Model by Bruno Zamorano") +
-  annotate("text", x=as.Date("2027-01-01"), y=1, label= "Data taken from https://ourworldindata.org")
+  annotate("text", x=as.Date("2033-01-01"), y=2.25, label= "Predicted date for 75% population fully vaccinated") +
+  annotate("text", x=as.Date("2033-01-01"), y=2, label= paste("Using data up to", LastDay)) +
+  annotate("text", x=as.Date("2033-01-01"), y=1.75, label= "Model by Bruno Zamorano") +
+  annotate("text", x=as.Date("2033-01-01"), y=1.5, label= "Data taken from https://ourworldindata.org")
 ggsave("xwing_continents.png")
 
