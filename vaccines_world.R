@@ -37,7 +37,9 @@ countries <- c("Israel", "United Kingdom", "United States", "Spain", "Mexico",
                "Belgium", "Germany", "India", "Sweden", "Canada",
                "United Arab Emirates", "Cuba", "Singapore", "Chile",
                "Cambodia", "South Korea", "Uruguay", "Turkey", "Iran",
-               "Vietnam", "Russia", "Morocco", "China", "Switzerland", "Czechia",
+#               "Vietnam", "Russia", "Morocco", "China", "Switzerland", "Czechia",
+# Switzerland problematic
+               "Vietnam", "Russia", "Morocco", "China", "Czechia",
                "Myanmar", "Colombia", "Argentina", "Ukraine", "Poland", "Austria",
                "South Africa", "Indonesia", "Pakistan", "Bangladesh",
                "Philippines", "Australia", "Egypt", "Ethiopia", "Nigeria")
